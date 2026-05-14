@@ -120,7 +120,7 @@
 
         /* ─── LAYOUT ─── */
         .container {
-            max-width: 1100px;
+            max-width: 1110px;
             margin: 0 auto;
             padding: 3rem 1.5rem 4rem;
             flex-grow: 1;
@@ -1047,6 +1047,45 @@
             display: flex;
             gap: 12px;
             width: 100%;
+        }
+
+        /* ─── FOOTER ─── */
+        .footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem 2.5rem;
+            font-size: 0.72rem;
+            color: var(--ink-muted);
+            border-top: 1px solid var(--border-light);
+            background: var(--surface);
+            text-align: center;
+            gap: 8px;
+        }
+
+        .footer-dev-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--ink-muted);
+            text-decoration: none;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+
+        .footer-dev-link:hover {
+            color: var(--ink);
+            border-color: var(--ink-muted);
+            background: var(--border-light);
+        }
+
+        .footer-dev-link svg {
+            flex-shrink: 0;
         }
 
         /* ─── SUBTLE NOISE ─── */
