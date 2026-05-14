@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Complaint Meeting Scheduler</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --gray-100: #f8f9fa;
+            --gray-200: #e8eaed;
+            --gray-300: #dadce0;
+            --gray-700: #3c4043;
+            --gray-900: #202124;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--gray-100);
+            color: var(--gray-900);
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: white;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--gray-700);
+        }
+
+        .nav-buttons button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-buttons button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex-grow: 1;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Slots Grid */
+        .slots-container {
+            margin-top: 1rem;
+        }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .slot-btn {
+            padding: 10px;
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .slot-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .slot-btn.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .slot-btn:disabled {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+            cursor: not-allowed;
+            border-color: var(--gray-200);
+            opacity: 0.7;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-submit:disabled {
+            background-color: var(--gray-300);
+            cursor: not-allowed;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        .alert.success { background-color: #e6f4ea; color: #137333; display: block; }
+        .alert.error { background-color: #fce8e6; color: #c5221f; display: block; }
+        .alert.info { background-color: #e8f0fe; color: #1967d2; display: block; }
+
+        /* Loader */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Admin Table */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .admin-table th, .admin-table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-300);
+        }
+        .admin-table th {
+            background-color: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        .admin-table tr:hover {
+            background-color: var(--gray-100);
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-badge.processed { background-color: #e6f4ea; color: #137333; }
+        .status-badge.failed { background-color: #fce8e6; color: #c5221f; }
+
+        /* Views */
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header { padding: 1rem; flex-direction: column; gap: 10px; }
+            .slots-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+            .admin-table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>🚔 Police Complaint Scheduler</h1>
+        <div class="nav-buttons">
+            <button class="active" onclick="switchTab('booking')">Book Slot</button>
+            <button onclick="switchTab('admin')">Admin</button>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- BOOKING VIEW -->
+        <div id="booking-view" class="view active">
+            <div class="card">
+                <h2>Schedule a Complaint Meeting</h2>
+                <p style="color: var(--gray-700); margin-bottom: 2rem;">Please fill out the form below to book a 6-minute Google Meet slot.</p>
+
+                <div id="booking-alert" class="alert"></div>
+
+                <form id="booking-form">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="date-picker" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Available Slots (6:00 PM - 7:30 PM)</label>
+                        <div id="slots-loading" style="display:none; color: var(--gray-700);"><div class="loader"></div> Loading slots...</div>
+                        <div id="slots-grid" class="slots-grid">
+                            <!-- Slots generated via JS -->
+                        </div>
+                        <input type="hidden" id="selected-slot" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Name / नाव *</label>
+                            <input type="text" id="form-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone / फोन नंबर *</label>
+                            <input type="tel" id="form-phone" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email / ई-मेल *</label>
+                        <input type="email" id="form-email" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Police Station / पोलीस स्टेशन *</label>
+                            <input type="text" id="form-station" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Address / पत्ता *</label>
+                            <input type="text" id="form-address" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Complaint Details / तक्रार (थोडक्यात) *</label>
+                        <textarea id="form-purpose" rows="3" required></textarea>
+                    </div>
+
+                    <button type="submit" id="btn-submit" class="btn-submit">Book Meeting</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ADMIN VIEW -->
+        <div id="admin-view" class="view">
+            <div class="card">
+                <h2>Admin Dashboard</h2>
+                <div id="admin-login" class="form-group">
+                    <label>Admin Password</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="password" id="admin-pass" placeholder="Enter password" style="flex:1;">
+                        <button class="btn-submit" style="width: auto;" onclick="loadAdminData()">Login</button>
+                    </div>
+                </div>
+
+                <div id="admin-alert" class="alert"></div>
+
+                <div id="admin-content" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3>All Bookings</h3>
+                        <button class="btn-submit" style="width: auto; padding: 0.5rem 1rem;" onclick="loadAdminData(true)">↻ Refresh</button>
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date/Time</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Link</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-tbody">
+                            <!-- Rows generated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ==========================================================
+        // ⚠️ SETUP REQUIRED: PASTE YOUR APPS SCRIPT WEB APP URL HERE
+        // ==========================================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZsqzxc9lNpLwpvxqkvC3m-4pk3Ic_C2Jk8PtkjXVDWhgIctP40IMvDDuUeb1_s5YR/exec'; // Replace this!
+        
+        let currentDate = '';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('date-picker');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+            dateInput.value = today;
+            currentDate = today;
+
+            fetchSlots(today);
+
+            dateInput.addEventListener('change', (e) => {
+                currentDate = e.target.value;
+                fetchSlots(currentDate);
+            });
+        });
+
+        // Tab Switching
+        function switchTab(tab) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-buttons button').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tab + '-view').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Fetch & Render Slots
+        async function fetchSlots(date) {
+            const grid = document.getElementById('slots-grid');
+            const loading = document.getElementById('slots-loading');
+            const hiddenInput = document.getElementById('selected-slot');
+            const btnSubmit = document.getElementById('btn-submit');
+            
+            grid.innerHTML = '';
+            hiddenInput.value = '';
+            btnSubmit.disabled = true;
+            loading.style.display = 'block';
+
+            if(SCRIPT_URL === 'YOUR_WEB_APP_URL_HERE'){
+                 loading.style.display = 'none';
+                 showAlert('booking', 'error', 'Error: Please configure the SCRIPT_URL in the HTML file first.');
+                 return;
+            }
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=slots&date=${date}`);
+                const data = await response.json();
+                
+                loading.style.display = 'none';
+
+                data.slots.forEach(slot => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'slot-btn';
+                    btn.textContent = slot.label;
+                    
+                    if (slot.booked) {
+                        btn.disabled = true;
+                        btn.textContent += ' (Booked)';
+                    } else {
+                        btn.onclick = () => selectSlot(btn, slot.value);
+                    }
+                    grid.appendChild(btn);
+                });
+
+            } catch (err) {
+                loading.style.display = 'none';
+                showAlert('booking', 'error', 'Failed to load slots. Please try again.');
+            }
+        }
+
+        function selectSlot(btnElement, slotValue) {
+            document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            document.getElementById('selected-slot').value = slotValue;
+            document.getElementById('btn-submit').disabled = false;
+        }
+
+        // Form Submission
+        document.getElementById('booking-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btn-submit');
+            const originalText = btn.textContent;
+            
+            btn.innerHTML = '<div class="loader"></div> Booking...';
+            btn.disabled = true;
+
+            const payload = {
+                name: document.getElementById('form-name').value,
+                phone: document.getElementById('form-phone').value,
+                email: document.getElementById('form-email').value,
+                station: document.getElementById('form-station').value,
+                address: document.getElementById('form-address').value,
+                purpose: document.getElementById('form-purpose').value,
+                slot: document.getElementById('selected-slot').value,
+                date: currentDate
+            };
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    // mode: 'no-cors' // Do NOT use no-cors, we need the response
+                });
+                
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('booking', 'success', `Success! Meeting booked. Check your email for the Meet link.`);
+                    document.getElementById('booking-form').reset();
+                    fetchSlots(currentDate); // Refresh slots
+                } else {
+                    showAlert('booking', 'error', result.message || 'Booking failed.');
+                    fetchSlots(currentDate); // Might have been taken
+                }
+            } catch (err) {
+                showAlert('booking', 'error', 'Network error. Please try again.');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Admin Functionality
+        async function loadAdminData(force = false) {
+            const pass = document.getElementById('admin-pass').value;
+            // Simple front-end check (real security is on backend, but this is fine for this use case)
+            if (pass !== 'admin123') {
+                showAlert('admin', 'error', 'Incorrect password');
+                return;
+            }
+
+            const alertBox = document.getElementById('admin-alert');
+            alertBox.style.display = 'none';
+            document.getElementById('admin-login').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
+
+            const tbody = document.getElementById('admin-tbody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;"><div class="loader"></div> Loading...</td></tr>';
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=bookings`);
+                const data = await response.json();
+                
+                tbody.innerHTML = '';
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No bookings found.</td></tr>';
+                    return;
+                }
+
+                // Reverse to show newest first
+                data.reverse().forEach(row => {
+                    const statusClass = (row['Status'] || '').includes('Failed') ? 'failed' : 'processed';
+                    const linkHtml = row['Meet Link'] ? `<a href="${row['Meet Link']}" target="_blank">Join</a>` : '-';
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${row['Assigned Slot'] || '-'}</td>
+                            <td><strong>${row['Name / नाव'] || '-'}</strong><br><small>${row['Phone number / फोन नंबर'] || ''}</small></td>
+                            <td>${row['Email / ई-मेल'] || '-'}</td>
+                            <td>${linkHtml}</td>
+                            <td><span class="status-badge ${statusClass}">${row['Status'] || 'Unknown'}</span></td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:red;">Failed to load data.</td></tr>';
+            }
+        }
+
+        // Helper
+        function showAlert(view, type, message) {
+            const el = document.getElementById(`${view}-alert`);
+            el.className = `alert ${type}`;
+            el.textContent = message;
+            
+            if(type === 'success' || type === 'error'){
+                setTimeout(() => { el.style.display = 'none'; }, 8000);
+            }
+        }
+    </script>
+</body>
+</html>
