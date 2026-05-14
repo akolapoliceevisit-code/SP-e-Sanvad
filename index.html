@@ -3,82 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Police Complaint Meeting Scheduler</title>
+    <title>SP-e-Sanvad</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1a73e8;
-            --primary-dark: #1557b0;
-            --success: #0f9d58;
-            --danger: #d93025;
-            --gray-100: #f8f9fa;
-            --gray-200: #e8eaed;
-            --gray-300: #dadce0;
-            --gray-700: #3c4043;
-            --gray-900: #202124;
-            --border-radius: 8px;
+            --bg: #f7f7f5;
+            --surface: #ffffff;
+            --ink: #0a0a0a;
+            --ink-secondary: #555555;
+            --ink-muted: #999999;
+            --charcoal: #1e1e1e;
+            --charcoal-hover: #000000;
+            --border: #e2e2e0;
+            --border-light: #eeeeec;
+            --accent-line: #0a0a0a;
+            --success-bg: #eef5ee;
+            --success-text: #2a5a2a;
+            --error-bg: #f5eeee;
+            --error-text: #5a2a2a;
+            --info-bg: #eeeeef;
+            --info-text: #3a3a3a;
+            --radius: 6px;
+            --radius-lg: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--gray-100);
-            color: var(--gray-900);
-            line-height: 1.5;
-            margin: 0;
-            padding: 0;
+            font-family: 'DM Mono', 'Courier New', monospace;
+            background-color: var(--bg);
+            color: var(--ink);
+            line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* ─── HEADER ─── */
         .header {
-            background-color: white;
-            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
-            padding: 1rem 2rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2.5rem;
+            height: 64px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-brand .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: var(--ink);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
         }
 
         .header h1 {
-            margin: 0;
-            font-size: 1.25rem;
-            color: var(--gray-700);
+            font-family: 'Syne', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg);
         }
 
         .nav-buttons button {
             background: none;
             border: none;
             cursor: pointer;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--gray-700);
-            border-bottom: 2px solid transparent;
+            padding: 0.5rem 1.25rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--ink-muted);
+            transition: all var(--transition);
+            position: relative;
+        }
+
+        .nav-buttons button:not(:last-child) {
+            border-right: 1px solid var(--border);
+        }
+
+        .nav-buttons button:hover {
+            color: var(--ink);
+            background: var(--border-light);
         }
 
         .nav-buttons button.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
+            background: var(--charcoal);
+            color: #ffffff;
         }
 
+        /* ─── LAYOUT ─── */
         .container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 4rem;
             flex-grow: 1;
             width: 100%;
-            box-sizing: border-box;
         }
 
         .card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            padding: 2rem;
-            margin-bottom: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Form Styles */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--ink);
+        }
+
+        .card-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .card-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -0.03em;
+            margin-bottom: 0.35rem;
+        }
+
+        .card-header p {
+            font-size: 0.85rem;
+            color: var(--ink-muted);
+            letter-spacing: 0.01em;
+        }
+
+        .section-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--ink-muted);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        /* ─── FORM ─── */
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -86,163 +193,384 @@
         label {
             display: block;
             margin-bottom: 0.5rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
             font-weight: 500;
-            color: var(--gray-700);
+            color: var(--ink-secondary);
+            letter-spacing: 0.03em;
         }
 
         input[type="text"],
         input[type="email"],
         input[type="tel"],
         input[type="date"],
-        textarea {
+        textarea,
+        select {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--gray-300);
-            border-radius: 4px;
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-
-        input:focus, textarea:focus {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--ink);
+            background: var(--surface);
+            transition: all var(--transition);
             outline: none;
-            border-color: var(--primary);
+            -webkit-appearance: none;
+            appearance: none;
         }
 
-        /* Slots Grid */
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--ink);
+            box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.06);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--ink-muted);
+        }
+
+        select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        /* ─── SLOTS ─── */
         .slots-container {
-            margin-top: 1rem;
+            margin-bottom: 2rem;
         }
 
         .slots-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 8px;
         }
 
         .slot-btn {
-            padding: 10px;
-            border: 1px solid var(--gray-300);
-            border-radius: 4px;
-            background: white;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
             cursor: pointer;
             text-align: center;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 400;
+            color: var(--ink-secondary);
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slot-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--ink);
+            opacity: 0;
+            transition: opacity var(--transition);
         }
 
         .slot-btn:hover:not(:disabled) {
-            border-color: var(--primary);
-            color: var(--primary);
+            border-color: var(--ink);
+            color: var(--ink);
+            transform: translateY(-1px);
         }
 
         .slot-btn.selected {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
+            background: var(--charcoal);
+            color: #ffffff;
+            border-color: var(--charcoal);
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .slot-btn.selected::before {
+            content: '✓ ';
+            font-size: 0.7rem;
         }
 
         .slot-btn:disabled {
-            background-color: var(--gray-200);
-            color: var(--gray-700);
+            background: var(--border-light);
+            color: var(--ink-muted);
             cursor: not-allowed;
-            border-color: var(--gray-200);
-            opacity: 0.7;
+            border-color: var(--border-light);
+            text-decoration: line-through;
+            text-decoration-color: var(--ink-muted);
         }
 
-        /* Submit Button */
+        #slots-loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--ink-muted);
+            font-size: 0.8rem;
+            padding: 1.5rem 0;
+        }
+
+        /* ─── BUTTONS ─── */
         .btn-submit {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            border-radius: 4px;
+            background: var(--charcoal);
+            color: #ffffff;
+            border: 1px solid var(--charcoal);
+            padding: 0.875rem 1.75rem;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            border-radius: var(--radius);
             cursor: pointer;
             width: 100%;
-            font-weight: 500;
-            transition: background-color 0.2s;
+            transition: all var(--transition);
+            text-transform: uppercase;
+            margin-top: 0.5rem;
         }
 
         .btn-submit:hover:not(:disabled) {
-            background-color: var(--primary-dark);
+            background: var(--charcoal-hover);
+            border-color: var(--charcoal-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn-submit:active:not(:disabled) {
+            transform: translateY(0);
         }
 
         .btn-submit:disabled {
-            background-color: var(--gray-300);
+            background: var(--border);
+            color: var(--ink-muted);
+            border-color: var(--border);
             cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
         }
 
-        /* Alerts */
+        .btn-sm {
+            width: auto;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* ─── ALERTS ─── */
         .alert {
-            padding: 1rem;
-            border-radius: 4px;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius);
             margin-bottom: 1.5rem;
             display: none;
+            font-size: 0.82rem;
+            border: 1px solid;
+            position: relative;
         }
-        .alert.success { background-color: #e6f4ea; color: #137333; display: block; }
-        .alert.error { background-color: #fce8e6; color: #c5221f; display: block; }
-        .alert.info { background-color: #e8f0fe; color: #1967d2; display: block; }
+        .alert.success { background: var(--success-bg); color: var(--success-text); border-color: #c5e0c5; display: block; }
+        .alert.error { background: var(--error-bg); color: var(--error-text); border-color: #e0c5c5; display: block; }
+        .alert.info { background: var(--info-bg); color: var(--info-text); border-color: var(--border); display: block; }
 
-        /* Loader */
+        /* ─── LOADER ─── */
         .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary);
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--ink);
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
+            animation: spin 0.7s linear infinite;
             display: inline-block;
             vertical-align: middle;
-            margin-right: 8px;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Admin Table */
+        /* ─── ADMIN ─── */
         .admin-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        .admin-table th, .admin-table td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid var(--gray-300);
+            margin-top: 1.5rem;
         }
         .admin-table th {
-            background-color: var(--gray-100);
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: var(--gray-700);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ink-muted);
+            border-bottom: 2px solid var(--ink);
+            background: transparent;
         }
-        .admin-table tr:hover {
-            background-color: var(--gray-100);
-        }
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
+        .admin-table td {
+            text-align: left;
+            padding: 1rem;
             font-size: 0.8rem;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--ink-secondary);
+            vertical-align: top;
+        }
+        .admin-table tr:hover td {
+            background: var(--bg);
+        }
+        .admin-table td strong {
+            color: var(--ink);
             font-weight: 500;
         }
-        .status-badge.processed { background-color: #e6f4ea; color: #137333; }
-        .status-badge.failed { background-color: #fce8e6; color: #c5221f; }
+        .admin-table td small {
+            color: var(--ink-muted);
+            font-size: 0.72rem;
+        }
+        .admin-table td a {
+            color: var(--ink);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            font-weight: 500;
+            transition: color var(--transition);
+        }
+        .admin-table td a:hover {
+            color: var(--ink-muted);
+        }
 
-        /* Views */
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            display: inline-block;
+        }
+        .status-badge.processed { background: var(--success-bg); color: var(--success-text); border: 1px solid #c5e0c5; }
+        .status-badge.failed { background: var(--error-bg); color: var(--error-text); border: 1px solid #e0c5c5; }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-header h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        /* ─── DIVIDER ─── */
+        .divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 2rem 0;
+        }
+
+        /* ─── VIEWS ─── */
         .view { display: none; }
         .view.active { display: block; }
 
-        /* Responsive */
-        @media (max-width: 600px) {
-            .header { padding: 1rem; flex-direction: column; gap: 10px; }
-            .slots-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-            .admin-table { display: block; overflow-x: auto; }
+        /* ─── FOOTER ─── */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.7rem;
+            color: var(--ink-muted);
+            letter-spacing: 0.04em;
+            border-top: 1px solid var(--border-light);
+            background: var(--surface);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 640px) {
+            .header {
+                padding: 0 1.25rem;
+                height: auto;
+                flex-direction: column;
+                gap: 12px;
+                padding: 1rem 1.25rem;
+            }
+            .container {
+                padding: 1.5rem 1rem 3rem;
+            }
+            .card {
+                padding: 1.75rem 1.25rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .slots-grid {
+                grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+                gap: 6px;
+            }
+            .admin-table {
+                display: block;
+                overflow-x: auto;
+            }
+            .card-header h2 {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* ─── ANIMATIONS ─── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .slot-btn {
+            opacity: 0;
+            animation: fadeUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Stagger slots via JS-injected delay, fallback */
+        .slot-btn:nth-child(1) { animation-delay: 0.02s; }
+        .slot-btn:nth-child(2) { animation-delay: 0.04s; }
+        .slot-btn:nth-child(3) { animation-delay: 0.06s; }
+        .slot-btn:nth-child(4) { animation-delay: 0.08s; }
+        .slot-btn:nth-child(5) { animation-delay: 0.10s; }
+        .slot-btn:nth-child(6) { animation-delay: 0.12s; }
+        .slot-btn:nth-child(7) { animation-delay: 0.14s; }
+        .slot-btn:nth-child(8) { animation-delay: 0.16s; }
+        .slot-btn:nth-child(9) { animation-delay: 0.18s; }
+        .slot-btn:nth-child(10) { animation-delay: 0.20s; }
+        .slot-btn:nth-child(11) { animation-delay: 0.22s; }
+        .slot-btn:nth-child(12) { animation-delay: 0.24s; }
+        .slot-btn:nth-child(13) { animation-delay: 0.26s; }
+        .slot-btn:nth-child(14) { animation-delay: 0.28s; }
+        .slot-btn:nth-child(15) { animation-delay: 0.30s; }
+        .slot-btn:nth-child(16) { animation-delay: 0.32s; }
+        .slot-btn:nth-child(17) { animation-delay: 0.34s; }
+        .slot-btn:nth-child(18) { animation-delay: 0.36s; }
+        .slot-btn:nth-child(19) { animation-delay: 0.38s; }
+        .slot-btn:nth-child(20) { animation-delay: 0.40s; }
+
+        /* ─── SUBTLE NOISE ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
         }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <h1>SP-e-Sanvad</h1>
+        <div class="header-brand">
+            <div class="logo-mark">SP</div>
+            <h1>SP-e-Sanvad</h1>
+        </div>
         <div class="nav-buttons">
             <button class="active" onclick="switchTab('booking')">Book Slot</button>
             <button onclick="switchTab('admin')">Admin</button>
@@ -250,51 +578,60 @@
     </header>
 
     <div class="container">
-        
+
         <!-- BOOKING VIEW -->
         <div id="booking-view" class="view active">
             <div class="card">
-                <h2>Schedule a meeting with SP Akola</h2>
-                <p style="color: var(--gray-700); margin-bottom: 2rem;">Please fill out the form below to book a 10-minute Google Meet slot.</p>
+                <div class="card-header">
+                    <h2>Schedule a Meeting with SP Akola</h2>
+                    <p>Book a 10-minute Google Meet slot — available daily from 6:00 PM to 7:30 PM.</p>
+                </div>
 
                 <div id="booking-alert" class="alert"></div>
 
                 <form id="booking-form">
+                    <div class="section-label">Date &amp; Time</div>
+
                     <div class="form-group">
-                        <label>Date</label>
+                        <label>Select Date</label>
                         <input type="date" id="date-picker" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Available Slots (6:00 PM - 7:30 PM)</label>
-                        <div id="slots-loading" style="display:none; color: var(--gray-700);"><div class="loader"></div> Loading slots...</div>
+                    <div class="form-group slots-container">
+                        <label>Available Slots</label>
+                        <div id="slots-loading" style="display:none;">
+                            <div class="loader"></div> Fetching available times...
+                        </div>
                         <div id="slots-grid" class="slots-grid">
                             <!-- Slots generated via JS -->
                         </div>
                         <input type="hidden" id="selected-slot" required>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="divider"></div>
+                    <div class="section-label">Your Details</div>
+
+                    <div class="form-row">
                         <div class="form-group">
                             <label>Name / नाव *</label>
-                            <input type="text" id="form-name" required>
+                            <input type="text" id="form-name" placeholder="Full name" required>
                         </div>
                         <div class="form-group">
                             <label>Phone / फोन नंबर *</label>
-                            <input type="tel" id="form-phone" required>
+                            <input type="tel" id="form-phone" placeholder="10-digit number" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>Email / ई-मेल *</label>
-                        <input type="email" id="form-email" required>
+                        <input type="email" id="form-email" placeholder="you@example.com" required>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-row">
                         <div class="form-group">
                             <label>Police Station / पोलीस स्टेशन *</label>
-                            <select id="form-station" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 1rem; box-sizing: border-box; background-color: white;">
-                                <option value="" disabled selected>Select Police Station</option>
+                            <select id="form-station" required>
+                                <option value="" disabled selected>Select station</option>
                                 <option value="City Kotwali">City Kotwali</option>
                                 <option value="Ramdaspeth">Ramdaspeth</option>
                                 <option value="Civil Lines">Civil Lines</option>
@@ -319,20 +656,21 @@
                                 <option value="Ural">Ural</option>
                                 <option value="Channi">Channi</option>
                                 <option value="Cyber">Cyber</option>
+                                 <option value="Other">Other</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Address / पत्ता *</label>
-                            <input type="text" id="form-address" required>
+                            <input type="text" id="form-address" placeholder="Village / City" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>Complaint Details / तक्रार (थोडक्यात) *</label>
-                        <textarea id="form-purpose" rows="3" required></textarea>
+                        <textarea id="form-purpose" rows="4" placeholder="Briefly describe your complaint..." required></textarea>
                     </div>
 
-                    <button type="submit" id="btn-submit" class="btn-submit">Book Meeting</button>
+                    <button type="submit" id="btn-submit" class="btn-submit" disabled>Book Meeting</button>
                 </form>
             </div>
         </div>
@@ -340,49 +678,75 @@
         <!-- ADMIN VIEW -->
         <div id="admin-view" class="view">
             <div class="card">
-                <h2>Admin Dashboard</h2>
+                <div class="card-header">
+                    <h2>Admin Dashboard</h2>
+                    <p>View and manage all scheduled meetings — filtered by date.</p>
+                </div>
+
                 <div id="admin-login" class="form-group">
                     <label>Admin Password</label>
                     <div style="display: flex; gap: 10px;">
                         <input type="password" id="admin-pass" placeholder="Enter password" style="flex:1;">
-                        <button class="btn-submit" style="width: auto;" onclick="loadAdminData()">Login</button>
+                        <button class="btn-submit btn-sm" onclick="loginAdmin()">Login</button>
                     </div>
                 </div>
 
                 <div id="admin-alert" class="alert"></div>
 
                 <div id="admin-content" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3>All Bookings</h3>
-                        <button class="btn-submit" style="width: auto; padding: 0.5rem 1rem;" onclick="loadAdminData(true)">↻ Refresh</button>
+
+                    <div class="section-label">Filter by Date</div>
+                    <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                        <div style="flex:1; min-width: 150px;">
+                            <input type="date" id="admin-date-picker">
+                        </div>
+                        <button class="btn-submit btn-sm" onclick="loadAdminData()">Load</button>
+                        <button class="btn-submit btn-sm" style="background:var(--bg);color:var(--ink);border-color:var(--border);" onclick="loadAllBookings()">Show All</button>
                     </div>
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Date/Time</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Link</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-tbody">
-                            <!-- Rows generated via JS -->
-                        </tbody>
-                    </table>
+
+                    <div class="divider"></div>
+
+                    <div class="admin-header">
+                        <h3 id="admin-title">Bookings</h3>
+                        <button class="btn-submit btn-sm" onclick="loadAdminData()">↻ Refresh</button>
+                    </div>
+
+                    <!-- Wrapper added to fix table clipping on smaller screens -->
+                    <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; border-radius: var(--radius); border: 1px solid var(--border-light);">
+                        <table class="admin-table" style="min-width: 700px; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Time Slot</th>
+                                    <th>Name & Phone</th>
+                                    <th>Station</th>
+                                    <th>Email</th>
+                                    <th>Meet Link</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-tbody">
+                                <!-- Rows generated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
     </div>
 
+    <footer class="footer">
+        SP-e-Sanvad &middot; SP Office, Akola District &middot; Maharashtra Police
+    </footer>
+
     <script>
         // ==========================================================
-        // ⚠️ SETUP REQUIRED: PASTE YOUR APPS SCRIPT WEB APP URL HERE
+        // SETUP: Apps Script Web App URL
         // ==========================================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZsqzxc9lNpLwpvxqkvC3m-4pk3Ic_C2Jk8PtkjXVDWhgIctP40IMvDDuUeb1_s5YR/exec'; // Replace this!
-        
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUQ5w1rpHXjGaKcHgxljgrCRyiISi3JJPQ4MfN-cRUGrRQO9nVIXE0i1bubKSvQ5Ps/exec';
+
         let currentDate = '';
+        let allBookingsCache = [];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -391,6 +755,9 @@
             dateInput.min = today;
             dateInput.value = today;
             currentDate = today;
+
+            // Set admin date picker to today as well
+            document.getElementById('admin-date-picker').value = today;
 
             fetchSlots(today);
 
@@ -404,7 +771,7 @@
         function switchTab(tab) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-buttons button').forEach(b => b.classList.remove('active'));
-            
+
             document.getElementById(tab + '-view').classList.add('active');
             event.target.classList.add('active');
         }
@@ -415,11 +782,11 @@
             const loading = document.getElementById('slots-loading');
             const hiddenInput = document.getElementById('selected-slot');
             const btnSubmit = document.getElementById('btn-submit');
-            
+
             grid.innerHTML = '';
             hiddenInput.value = '';
             btnSubmit.disabled = true;
-            loading.style.display = 'block';
+            loading.style.display = 'flex';
 
             if(SCRIPT_URL === 'YOUR_WEB_APP_URL_HERE'){
                  loading.style.display = 'none';
@@ -430,18 +797,19 @@
             try {
                 const response = await fetch(`${SCRIPT_URL}?action=slots&date=${date}`);
                 const data = await response.json();
-                
+
                 loading.style.display = 'none';
 
-                data.slots.forEach(slot => {
+                data.slots.forEach((slot, index) => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'slot-btn';
+                    btn.style.animationDelay = `${index * 0.03}s`;
                     btn.textContent = slot.label;
-                    
+
                     if (slot.booked) {
                         btn.disabled = true;
-                        btn.textContent += ' (Booked)';
+                        btn.textContent = slot.label;
                     } else {
                         btn.onclick = () => selectSlot(btn, slot.value);
                     }
@@ -464,11 +832,11 @@
         // Form Submission
         document.getElementById('booking-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const btn = document.getElementById('btn-submit');
             const originalText = btn.textContent;
-            
-            btn.innerHTML = '<div class="loader"></div> Booking...';
+
+            btn.innerHTML = '<div class="loader" style="border-top-color:#fff;border-color:rgba(255,255,255,0.2);"></div> Booking...';
             btn.disabled = true;
 
             const payload = {
@@ -486,81 +854,198 @@
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload),
-                    // mode: 'no-cors' // Do NOT use no-cors, we need the response
                 });
-                
+
                 const result = await response.json();
 
                 if (result.success) {
-                    showAlert('booking', 'success', `Success! Meeting booked. Check your email for the Meet link.`);
+                    showAlert('booking', 'success', `Meeting booked successfully. Check your email for the Google Meet link.`);
                     document.getElementById('booking-form').reset();
-                    fetchSlots(currentDate); // Refresh slots
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('date-picker').value = today;
+                    currentDate = today;
+                    fetchSlots(currentDate);
                 } else {
-                    showAlert('booking', 'error', result.message || 'Booking failed.');
-                    fetchSlots(currentDate); // Might have been taken
+                    showAlert('booking', 'error', result.message || 'Booking failed. Please try again.');
+                    fetchSlots(currentDate);
                 }
             } catch (err) {
-                showAlert('booking', 'error', 'Network error. Please try again.');
+                showAlert('booking', 'error', 'Network error. Please check your connection and try again.');
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
             }
         });
 
-        // Admin Functionality
-        async function loadAdminData(force = false) {
+        // =====================================================================
+        //  ADMIN — Flexible key finder (handles different header formats)
+        // =====================================================================
+
+        function getVal(row, candidates, fallback) {
+            for (const key of candidates) {
+                if (row[key] !== undefined && row[key] !== null && row[key] !== '') return row[key];
+            }
+            const rowKeys = Object.keys(row);
+            for (const candidate of candidates) {
+                const lower = candidate.toLowerCase();
+                for (const k of rowKeys) {
+                    if (k.toLowerCase().includes(lower) || lower.includes(k.toLowerCase())) {
+                        if (row[k] !== undefined && row[k] !== null && row[k] !== '') return row[k];
+                    }
+                }
+            }
+            return fallback || '—';
+        }
+
+        function extractTime(slotStr) {
+            if (!slotStr || slotStr === '—') return '—';
+            try {
+                const parts = slotStr.split('–');
+                if (parts.length < 2) return slotStr;
+
+                const leftPart = parts[0].trim();
+                const endTime  = parts[1].trim();
+                const spaceIdx = leftPart.lastIndexOf(' ');
+                const startTime = leftPart.substring(spaceIdx + 1);
+
+                return formatTime24to12(startTime) + ' – ' + formatTime24to12(endTime);
+            } catch (e) {
+                return slotStr;
+            }
+        }
+
+        function formatTime24to12(t) {
+            const [h, m] = t.split(':').map(Number);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const hour12 = h % 12 || 12;
+            return `${hour12}:${m.toString().padStart(2, '0')} ${ampm}`;
+        }
+
+        function extractDate(slotStr) {
+            if (!slotStr) return '';
+            const match = slotStr.match(/(\d{4}-\d{2}-\d{2})/);
+            return match ? match[1] : '';
+        }
+
+        // =====================================================================
+        //  ADMIN — Login
+        // =====================================================================
+        function loginAdmin() {
             const pass = document.getElementById('admin-pass').value;
-            // Simple front-end check (real security is on backend, but this is fine for this use case)
             if (pass !== 'admin123') {
-                showAlert('admin', 'error', 'Incorrect password');
+                showAlert('admin', 'error', 'Incorrect password.');
                 return;
             }
-
-            const alertBox = document.getElementById('admin-alert');
-            alertBox.style.display = 'none';
+            document.getElementById('admin-alert').style.display = 'none';
             document.getElementById('admin-login').style.display = 'none';
             document.getElementById('admin-content').style.display = 'block';
+            loadAdminData();
+        }
 
+        // =====================================================================
+        //  ADMIN — Load bookings for a specific date
+        // =====================================================================
+        async function loadAdminData() {
+            const filterDate = document.getElementById('admin-date-picker').value;
             const tbody = document.getElementById('admin-tbody');
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;"><div class="loader"></div> Loading...</td></tr>';
+            const title = document.getElementById('admin-title');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;"><div class="loader"></div></td></tr>';
 
             try {
                 const response = await fetch(`${SCRIPT_URL}?action=bookings`);
                 const data = await response.json();
-                
-                tbody.innerHTML = '';
-                
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No bookings found.</td></tr>';
-                    return;
+                allBookingsCache = data;
+
+                let filtered;
+                if (filterDate) {
+                    filtered = data.filter(row => {
+                        const slot = getVal(row, ['Assigned Slot', 'assigned slot', 'Slot'], '');
+                        return extractDate(String(slot)) === filterDate;
+                    });
+                    const dateObj = new Date(filterDate + 'T00:00:00');
+                    const readableDate = dateObj.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+                    title.textContent = `Bookings — ${readableDate} (${filtered.length})`;
+                } else {
+                    filtered = data;
+                    title.textContent = `All Bookings (${filtered.length})`;
                 }
 
-                // Reverse to show newest first
-                data.reverse().forEach(row => {
-                    const statusClass = (row['Status'] || '').includes('Failed') ? 'failed' : 'processed';
-                    const linkHtml = row['Meet Link'] ? `<a href="${row['Meet Link']}" target="_blank">Join</a>` : '-';
-                    
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${row['Assigned Slot'] || '-'}</td>
-                            <td><strong>${row['Name / नाव'] || '-'}</strong><br><small>${row['Phone number / फोन नंबर'] || ''}</small></td>
-                            <td>${row['Email / ई-मेल'] || '-'}</td>
-                            <td>${linkHtml}</td>
-                            <td><span class="status-badge ${statusClass}">${row['Status'] || 'Unknown'}</span></td>
-                        </tr>
-                    `;
-                });
+                renderAdminTable(filtered);
             } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:red;">Failed to load data.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--error-text);">Failed to load data.</td></tr>';
             }
         }
 
-        // Helper
+        // =====================================================================
+        //  ADMIN — Show ALL bookings (no date filter)
+        // =====================================================================
+        async function loadAllBookings() {
+            document.getElementById('admin-date-picker').value = '';
+            const tbody = document.getElementById('admin-tbody');
+            const title = document.getElementById('admin-title');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;"><div class="loader"></div></td></tr>';
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=bookings`);
+                const data = await response.json();
+                allBookingsCache = data;
+                title.textContent = `All Bookings (${data.length})`;
+                renderAdminTable(data);
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--error-text);">Failed to load data.</td></tr>';
+            }
+        }
+
+        // =====================================================================
+        //  ADMIN — Render the table rows
+        // =====================================================================
+        function renderAdminTable(rows) {
+            const tbody = document.getElementById('admin-tbody');
+            tbody.innerHTML = '';
+
+            if (rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--ink-muted);">No bookings found for this date.</td></tr>';
+                return;
+            }
+
+            rows.sort((a, b) => {
+                const slotA = getVal(a, ['Assigned Slot', 'Slot'], '');
+                const slotB = getVal(b, ['Assigned Slot', 'Slot'], '');
+                return String(slotA).localeCompare(String(slotB));
+            });
+
+            rows.forEach((row, i) => {
+                const name    = getVal(row, ['name', 'Name', 'Name / नाव', 'Full Name', 'नाव'], '—');
+                const phone   = getVal(row, ['phone', 'Phone', 'Phone number / फोन नंबर', 'Phone Number', 'फोन नंबर'], '');
+                const email   = getVal(row, ['email', 'Email', 'Email / ई-मेल', 'Email Address', 'ई-मेल'], '—');
+                const station = getVal(row, ['station', 'Police station / पोलीस स्टेशन', 'Police Station', 'पोलीस स्टेशन'], '—');
+                const slot    = getVal(row, ['Assigned Slot', 'assigned slot', 'Slot'], '—');
+                const link    = getVal(row, ['Meet Link', 'meet link'], '');
+                const status  = getVal(row, ['Status', 'status'], 'Unknown');
+
+                const timeOnly    = extractTime(String(slot));
+                const statusClass = String(status).includes('Failed') ? 'failed' : 'processed';
+                const linkHtml    = link && link !== '—' ? `<a href="${link}" target="_blank">Join Meet →</a>` : '—';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="white-space:nowrap; font-weight:600;">${timeOnly}</td>
+                        <td><strong style="color:var(--ink);">${name}</strong><br><span style="color:var(--ink-muted);font-size:0.75rem;">${phone}</span></td>
+                        <td style="white-space:nowrap;"><small>${station}</small></td>
+                        <td style="word-break:break-all; max-width:200px;">${email}</td>
+                        <td style="white-space:nowrap;">${linkHtml}</td>
+                        <td><span class="status-badge ${statusClass}">${status}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Alert Helper
         function showAlert(view, type, message) {
             const el = document.getElementById(`${view}-alert`);
             el.className = `alert ${type}`;
             el.textContent = message;
-            
+
             if(type === 'success' || type === 'error'){
                 setTimeout(() => { el.style.display = 'none'; }, 8000);
             }
