@@ -452,9 +452,17 @@
         // =====================================================================
         //  ADMIN — Login
         // =====================================================================
-        function loginAdmin() {
+        async function loginAdmin() {
             const pass = document.getElementById('admin-pass').value;
-            if (pass !== 'admin123') {
+            
+            // Hash the input password using SHA-256
+            const msgBuffer = new TextEncoder().encode(pass);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            
+            if (hashHex !== '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9') {
                 showAlert('admin', 'error', 'Incorrect password.');
                 return;
             }
@@ -545,6 +553,7 @@
                 const link    = getVal(row, ['Meet Link', 'meet link'], '');
                 const status  = getVal(row, ['Status', 'status'], 'Unknown');
                 const docs    = getVal(row, ['Documents', 'documents', 'Docs'], '');
+                const purpose = getVal(row, ['Complaint details / \u0924\u0915\u094d\u0930\u093e\u0930 ( short / \u0925\u094b\u0921\u0915\u094d\u092f\u093e\u0924 )', 'purpose', 'Purpose', 'Complaint Details', 'Complaint details', '\u0924\u0915\u094d\u0930\u093e\u0930'], '\u2014');
 
                 const timeOnly    = extractTime(String(slot));
                 const statusClass = String(status).includes('Failed') ? 'failed' : 'processed';
@@ -561,9 +570,13 @@
                     }
                 }
 
+                const detailId = `detail-row-${i}`;
+
                 tbody.innerHTML += `
-                    <tr>
-                        <td style="white-space:nowrap; font-weight:600;">${timeOnly}</td>
+                    <tr class="booking-row" onclick="toggleDetailRow('${detailId}', this)">
+                        <td style="white-space:nowrap; font-weight:600;">
+                            <span class="detail-chevron" id="chevron-${detailId}">&#9654;</span> ${timeOnly}
+                        </td>
                         <td>
                             <strong style="color:var(--ink);">${name}</strong><br>
                             <span style="color:var(--ink-muted);font-size:0.75rem;">${phone}</span><br>
@@ -573,10 +586,32 @@
                         <td style="min-width: 140px;">${docsHtml}</td>
                         <td style="white-space:nowrap;">${linkHtml}</td>
                         <td><span class="status-badge ${statusClass}">${status}</span></td>
-                        <td><button type="button" class="doc-preview-btn" style="color:var(--error-text);border-color:rgba(176,0,32,0.3);" onclick="confirmDeleteBooking('${String(slot).replace(/'/g, "\\'")}', '${String(phone).replace(/'/g, "\\'")}')">Delete</button></td>
+                        <td><button type="button" class="doc-preview-btn" style="color:var(--error-text);border-color:rgba(176,0,32,0.3);" onclick="event.stopPropagation(); confirmDeleteBooking('${String(slot).replace(/'/g, "\\'")}', '${String(phone).replace(/'/g, "\\'")}')">Delete</button></td>
+                    </tr>
+                    <tr class="detail-row" id="${detailId}" style="display:none;">
+                        <td colspan="7">
+                            <div class="detail-row-content">
+                                <span class="detail-label">Complaint Details / \u0924\u0915\u094d\u0930\u093e\u0930</span>
+                                <p class="detail-text">${purpose}</p>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
+        }
+
+        // =====================================================================
+        //  ADMIN — Toggle complaint detail row
+        // =====================================================================
+        function toggleDetailRow(detailId, triggerRow) {
+            const detailRow = document.getElementById(detailId);
+            const chevron = document.getElementById('chevron-' + detailId);
+            if (!detailRow) return;
+
+            const isOpen = detailRow.style.display !== 'none';
+            detailRow.style.display = isOpen ? 'none' : 'table-row';
+            if (chevron) chevron.classList.toggle('open', !isOpen);
+            if (triggerRow) triggerRow.classList.toggle('expanded', !isOpen);
         }
 
         // Alert Helper
