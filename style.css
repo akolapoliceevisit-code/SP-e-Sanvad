@@ -1049,6 +1049,63 @@
             width: 100%;
         }
 
+        /* ─── COMPLAINT DETAIL ACCORDION ─── */
+        .booking-row {
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+        .booking-row:hover {
+            background: var(--border-light);
+        }
+
+        .booking-row.expanded {
+            background: var(--border-light);
+        }
+
+        .detail-chevron {
+            display: inline-block;
+            font-size: 0.6rem;
+            color: var(--ink-muted);
+            transition: transform 0.25s ease;
+            margin-right: 4px;
+        }
+
+        .detail-chevron.open {
+            transform: rotate(90deg);
+        }
+
+        .detail-row td {
+            padding: 0 !important;
+            border-top: none !important;
+        }
+
+        .detail-row-content {
+            padding: 1rem 1.5rem;
+            background: var(--bg);
+            border-top: 1px dashed var(--border-light);
+        }
+
+        .detail-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ink-muted);
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+
+        .detail-text {
+            font-size: 0.82rem;
+            color: var(--ink-secondary);
+            line-height: 1.6;
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
         /* ─── FOOTER ─── */
         .footer {
             display: flex;
