@@ -242,7 +242,7 @@
 <body>
 
     <header class="header">
-        <h1>🚔 Police Complaint Scheduler</h1>
+        <h1>SP-e-Sanvad</h1>
         <div class="nav-buttons">
             <button class="active" onclick="switchTab('booking')">Book Slot</button>
             <button onclick="switchTab('admin')">Admin</button>
@@ -254,8 +254,8 @@
         <!-- BOOKING VIEW -->
         <div id="booking-view" class="view active">
             <div class="card">
-                <h2>Schedule a Complaint Meeting</h2>
-                <p style="color: var(--gray-700); margin-bottom: 2rem;">Please fill out the form below to book a 6-minute Google Meet slot.</p>
+                <h2>Schedule a meeting with SP Akola</h2>
+                <p style="color: var(--gray-700); margin-bottom: 2rem;">Please fill out the form below to book a 10-minute Google Meet slot.</p>
 
                 <div id="booking-alert" class="alert"></div>
 
@@ -293,7 +293,33 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
                             <label>Police Station / पोलीस स्टेशन *</label>
-                            <input type="text" id="form-station" required>
+                            <select id="form-station" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 1rem; box-sizing: border-box; background-color: white;">
+                                <option value="" disabled selected>Select Police Station</option>
+                                <option value="City Kotwali">City Kotwali</option>
+                                <option value="Ramdaspeth">Ramdaspeth</option>
+                                <option value="Civil Lines">Civil Lines</option>
+                                <option value="Old City">Old City</option>
+                                <option value="Khadan">Khadan</option>
+                                <option value="Akot Fail">Akot Fail</option>
+                                <option value="Dabki Road">Dabki Road</option>
+                                <option value="MIDC">MIDC</option>
+                                <option value="Akot City">Akot City</option>
+                                <option value="Akot Rural">Akot Rural</option>
+                                <option value="Telhara">Telhara</option>
+                                <option value="Dahihanda">Dahihanda</option>
+                                <option value="Hiwarkhed">Hiwarkhed</option>
+                                <option value="Murtizapur City">Murtizapur City</option>
+                                <option value="Murtizapur Rural">Murtizapur Rural</option>
+                                <option value="Borgaon Manju">Borgaon Manju</option>
+                                <option value="Mana">Mana</option>
+                                <option value="Pinjar">Pinjar</option>
+                                <option value="Barshitakli">Barshitakli</option>
+                                <option value="Balapur">Balapur</option>
+                                <option value="Patur">Patur</option>
+                                <option value="Ural">Ural</option>
+                                <option value="Channi">Channi</option>
+                                <option value="Cyber">Cyber</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Address / पत्ता *</label>
