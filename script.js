@@ -462,7 +462,7 @@
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
             
-            if (hashHex !== '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9') {
+            if (hashHex !== 'cf1077a19f17bed902fd144773e2d2037759e9906c68350f935d534bf72cc50e') {
                 showAlert('admin', 'error', 'Incorrect password.');
                 return;
             }
