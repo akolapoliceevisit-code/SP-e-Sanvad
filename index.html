@@ -13,7 +13,7 @@
 
     <header class="header">
         <div class="header-brand">
-            <div class="logo-mark">SP</div>
+            <img src="./assests/logo.jpeg" alt="Akola Police Logo" class="logo-img">
             <h1>SP-e Samvaad</h1>
         </div>
         <div class="nav-buttons">
@@ -28,11 +28,11 @@
         <div id="booking-view" class="view active">
             <div class="card">
                 <div class="card-header">
+                    <img src="./assests/logo.jpeg" alt="Akola Police Logo" class="card-header-logo">
                     <h2>Schedule a Meeting with SP Akola</h2>
-                    <p>Book a 10-minute Google Meet slot — available daily from 6:00 PM to 7:30 PM.</p>
+                    <p>Book a 10-minute Google Meet slot available daily from 6:00 PM to 7:30 PM.</p>
                 </div>
 
-                <div id="booking-alert" class="alert"></div>
 
                 <form id="booking-form">
                     <div class="section-label">Date &amp; Time</div>
@@ -44,9 +44,7 @@
 
                     <div class="form-group slots-container">
                         <label>Available Slots</label>
-                        <div id="slots-loading" style="display:none;">
-                            <div class="loader"></div> Fetching available times...
-                        </div>
+
 
                         <!-- Mobile: compact trigger button -->
                         <button type="button" id="mobile-slot-trigger" class="mobile-slot-trigger" onclick="openSlotModal()">
@@ -69,17 +67,20 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>Name / नाव *</label>
-                            <input type="text" id="form-name" placeholder="Full name" required>
+                            <input type="text" id="form-name" placeholder="Full name" minlength="3" required>
+                            <small class="validation-msg"></small>
                         </div>
                         <div class="form-group">
                             <label>Phone / फोन नंबर *</label>
-                            <input type="tel" id="form-phone" placeholder="10-digit number" required>
+                            <input type="tel" id="form-phone" placeholder="10-digit number" pattern="\d{10}" minlength="10" maxlength="10" required>
+                            <small class="validation-msg"></small>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>Email / ई-मेल *</label>
                         <input type="email" id="form-email" placeholder="you@example.com" required>
+                        <small class="validation-msg"></small>
                     </div>
 
                     <div class="form-row">
@@ -113,16 +114,19 @@
                                 <option value="Cyber">Cyber</option>
                                 <option value="Other">Other</option>
                             </select>
+                            <small class="validation-msg"></small>
                         </div>
                         <div class="form-group">
                             <label>Address / पत्ता *</label>
-                            <input type="text" id="form-address" placeholder="Village / City" required>
+                            <input type="text" id="form-address" placeholder="Village / City" minlength="3" required>
+                            <small class="validation-msg"></small>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Complaint Details / तक्रार (थोडक्यात) *</label>
-                        <textarea id="form-purpose" rows="4" placeholder="Briefly describe your complaint..." required></textarea>
+                        <label>Complaint Details / तक्रार (थोडक्यात) <span style="color:var(--ink-muted);font-weight:400;">(Optional)</span></label>
+                        <textarea id="form-purpose" rows="4" placeholder="Briefly describe your complaint... (Max 300 words)"></textarea>
+                        <small class="validation-msg"></small>
                     </div>
 
                     <!-- Document Upload (Optional) -->
@@ -155,6 +159,7 @@
         <div id="admin-view" class="view">
             <div class="card">
                 <div class="card-header">
+                    <img src="./assests/logo.jpeg" alt="Akola Police Logo" class="card-header-logo">
                     <h2>Admin Dashboard</h2>
                     <p>View and manage all scheduled meetings — filtered by date.</p>
                 </div>
@@ -167,7 +172,6 @@
                     </div>
                 </div>
 
-                <div id="admin-alert" class="alert"></div>
 
                 <div id="admin-content" style="display: none;">
 
@@ -276,6 +280,9 @@
             Connect Developer
         </a>
     </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
 
    <script src="./script.js"></script>
 </body>
