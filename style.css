@@ -120,7 +120,7 @@
 
         /* ─── LAYOUT ─── */
         .container {
-            max-width: 1160px;
+            max-width: 1180px;
             margin: 0 auto;
             padding: 3rem 1.5rem 4rem;
             flex-grow: 1;
