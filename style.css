@@ -59,19 +59,12 @@
             gap: 12px;
         }
 
-        .header-brand .logo-mark {
-            width: 32px;
-            height: 32px;
-            background: var(--ink);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
+        .header-brand .logo-img {
+            height: 40px;
+            width: auto;
+            border-radius: 4px;
+            object-fit: contain;
+            display: block;
         }
 
         .header h1 {
@@ -149,6 +142,19 @@
 
         .card-header {
             margin-bottom: 2.5rem;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            column-gap: 1.5rem;
+            row-gap: 0.35rem;
+            align-items: center;
+        }
+
+        .card-header-logo {
+            grid-row: 1 / span 2;
+            width: 115px;
+            height: auto;
+            border-radius: 8px;
+            object-fit: contain;
         }
 
         .card-header h2 {
@@ -157,13 +163,20 @@
             font-weight: 700;
             color: var(--ink);
             letter-spacing: -0.03em;
-            margin-bottom: 0.35rem;
+            margin-bottom: 0;
+            grid-column: 2;
+            grid-row: 1;
+            align-self: end;
         }
 
         .card-header p {
             font-size: 0.85rem;
             color: var(--ink-muted);
             letter-spacing: 0.01em;
+            margin-top: 0;
+            grid-column: 2;
+            grid-row: 2;
+            align-self: start;
         }
 
         .section-label {
@@ -235,6 +248,60 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.25rem;
+        }
+
+        /* ─── REAL-TIME VALIDATION ─── */
+        .form-group {
+            position: relative;
+        }
+        
+        .validation-msg {
+            display: block;
+            font-size: 0.72rem;
+            color: var(--error-text);
+            margin-top: 0.4rem;
+            min-height: 14px; /* Maintain layout space even when empty */
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            font-weight: 500;
+        }
+
+        .is-invalid ~ .validation-msg {
+            opacity: 1;
+        }
+
+        input.is-valid, select.is-valid, textarea.is-valid {
+            border-color: var(--success-text) !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e7d32' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 12px) 14px;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        input.is-invalid, select.is-invalid, textarea.is-invalid {
+            border-color: var(--error-text) !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c62828' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='8' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'%3E%3C/line%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 12px) 14px;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        select.is-valid {
+            background-image: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e7d32' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-position: right 1rem center, right 2.5rem center;
+            background-size: 1rem, 18px;
+        }
+
+        select.is-invalid {
+            background-image: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c62828' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='8' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'%3E%3C/line%3E%3C/svg%3E");
+            background-position: right 1rem center, right 2.5rem center;
+            background-size: 1rem, 18px;
         }
 
         /* ─── SLOTS ─── */
@@ -356,19 +423,70 @@
             letter-spacing: 0.06em;
         }
 
-        /* ─── ALERTS ─── */
-        .alert {
+        /* ─── TOAST NOTIFICATIONS ─── */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast {
+            pointer-events: auto;
             padding: 1rem 1.25rem;
             border-radius: var(--radius);
-            margin-bottom: 1.5rem;
-            display: none;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
+            font-weight: 500;
             border: 1px solid;
-            position: relative;
+            background: var(--surface);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards, fadeOut 0.4s ease 4.6s forwards;
+            max-width: 350px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .alert.success { background: var(--success-bg); color: var(--success-text); border-color: #c5e0c5; display: block; }
-        .alert.error { background: var(--error-bg); color: var(--error-text); border-color: #e0c5c5; display: block; }
-        .alert.info { background: var(--info-bg); color: var(--info-text); border-color: var(--border); display: block; }
+
+        .toast.success { border-left: 4px solid var(--success-text); color: var(--success-text); }
+        .toast.error { border-left: 4px solid var(--error-text); color: var(--error-text); }
+        .toast.info { border-left: 4px solid var(--info-text); color: var(--info-text); }
+
+        @keyframes slideInRight {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* ─── SKELETON LOADERS ─── */
+        .skeleton {
+            background: #eee;
+            background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+            background-size: 200% 100%;
+            animation: 1.5s shimmer linear infinite;
+        }
+        @keyframes shimmer {
+            to { background-position-x: -200%; }
+        }
+        .skeleton-slot {
+            height: 42px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+        }
+        .skeleton-text {
+            height: 14px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+        .skeleton-text.short {
+            width: 60%;
+        }
 
         /* ─── LOADER ─── */
         .loader {
@@ -602,11 +720,10 @@
             .header-brand {
                 gap: 6px;
             }
-            .header-brand .logo-mark {
-                width: 24px;
-                height: 24px;
-                font-size: 0.65rem;
-                border-radius: 6px;
+            .header-brand .logo-img {
+                height: 32px;
+                width: auto;
+                border-radius: 4px;
             }
             .header h1 {
                 font-size: 0.9rem;
@@ -622,6 +739,26 @@
             }
             .card {
                 padding: 1.75rem 1.25rem;
+            }
+            .card-header {
+                grid-template-columns: auto 1fr;
+                grid-template-rows: auto auto;
+                row-gap: 0.75rem;
+                column-gap: 1rem;
+            }
+            .card-header-logo {
+                width: 64px;
+                grid-row: 1;
+                grid-column: 1;
+            }
+            .card-header h2 {
+                grid-row: 1;
+                grid-column: 2;
+                align-self: center;
+            }
+            .card-header p {
+                grid-row: 2;
+                grid-column: 1 / span 2;
             }
             .form-row {
                 grid-template-columns: 1fr;
