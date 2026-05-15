@@ -73,7 +73,6 @@
         async function fetchSlots(date) {
             const grid = document.getElementById('slots-grid');
             const modalGrid = document.getElementById('modal-slots-grid');
-            const loading = document.getElementById('slots-loading');
             const hiddenInput = document.getElementById('selected-slot');
             const btnSubmit = document.getElementById('btn-submit');
             const mobileTrigger = document.getElementById('mobile-slot-trigger');
@@ -83,14 +82,20 @@
             modalGrid.innerHTML = '';
             hiddenInput.value = '';
             btnSubmit.disabled = true;
-            loading.style.display = 'flex';
+
+            // Inject skeletons
+            for (let i = 0; i < 9; i++) {
+                grid.innerHTML += '<div class="skeleton skeleton-slot"></div>';
+                modalGrid.innerHTML += '<div class="skeleton skeleton-slot"></div>';
+            }
 
             // Reset mobile trigger
             mobileTrigger.classList.remove('has-selection');
             mobileLabel.textContent = 'Tap to select a time slot';
 
             if(SCRIPT_URL === 'YOUR_WEB_APP_URL_HERE'){
-                 loading.style.display = 'none';
+                 grid.innerHTML = '';
+                 modalGrid.innerHTML = '';
                  showAlert('booking', 'error', 'Error: Please configure the SCRIPT_URL in the HTML file first.');
                  return;
             }
@@ -101,7 +106,6 @@
             const dayOfWeek = selectedDateObj.getDay();
             
             if (dayOfWeek === 0 || dayOfWeek === 6) {
-                loading.style.display = 'none';
                 grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: var(--error-text); padding: 1.5rem; background: var(--error-bg); border-radius: var(--radius);">Booking is closed on weekends (Saturday & Sunday).</div>';
                 modalGrid.innerHTML = '<div style="text-align: center; color: var(--error-text); padding: 1.5rem;">Booking is closed on weekends.</div>';
                 showAlert('booking', 'error', 'Slot booking is not available on Saturdays and Sundays.');
@@ -112,7 +116,8 @@
                 const response = await fetch(`${SCRIPT_URL}?action=slots&date=${date}`);
                 const data = await response.json();
 
-                loading.style.display = 'none';
+                grid.innerHTML = '';
+                modalGrid.innerHTML = '';
 
                 data.slots.forEach((slot, index) => {
                     // Create button for desktop inline grid
@@ -145,7 +150,8 @@
                 });
 
             } catch (err) {
-                loading.style.display = 'none';
+                grid.innerHTML = '';
+                modalGrid.innerHTML = '';
                 showAlert('booking', 'error', 'Failed to load slots. Please try again.');
             }
         }
@@ -343,6 +349,12 @@
                 return;
             }
 
+            // Real-time validation check
+            if (!validateAllFields()) {
+                showAlert('booking', 'error', 'Please fix the errors in the form before submitting.');
+                return;
+            }
+
             const btn = document.getElementById('btn-submit');
             const originalText = btn.textContent;
 
@@ -466,7 +478,6 @@
                 showAlert('admin', 'error', 'Incorrect password.');
                 return;
             }
-            document.getElementById('admin-alert').style.display = 'none';
             document.getElementById('admin-login').style.display = 'none';
             document.getElementById('admin-content').style.display = 'block';
             loadAdminData();
@@ -479,7 +490,9 @@
             const filterDate = document.getElementById('admin-date-picker').value;
             const tbody = document.getElementById('admin-tbody');
             const title = document.getElementById('admin-title');
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;"><div class="loader"></div></td></tr>';
+            
+            const skeletonRow = '<tr><td colspan="7"><div style="display:flex;gap:15px;align-items:center;"><div class="skeleton skeleton-text short" style="width:100px;margin:0;"></div><div class="skeleton skeleton-text" style="flex:1;margin:0;"></div><div class="skeleton skeleton-text short" style="width:80px;margin:0;"></div></div></td></tr>';
+            tbody.innerHTML = skeletonRow.repeat(5);
 
             try {
                 const response = await fetch(`${SCRIPT_URL}?action=bookings`);
@@ -513,7 +526,9 @@
             document.getElementById('admin-date-picker').value = '';
             const tbody = document.getElementById('admin-tbody');
             const title = document.getElementById('admin-title');
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;"><div class="loader"></div></td></tr>';
+            
+            const skeletonRow = '<tr><td colspan="7"><div style="display:flex;gap:15px;align-items:center;"><div class="skeleton skeleton-text short" style="width:100px;margin:0;"></div><div class="skeleton skeleton-text" style="flex:1;margin:0;"></div><div class="skeleton skeleton-text short" style="width:80px;margin:0;"></div></div></td></tr>';
+            tbody.innerHTML = skeletonRow.repeat(5);
 
             try {
                 const response = await fetch(`${SCRIPT_URL}?action=bookings`);
@@ -614,15 +629,30 @@
             if (triggerRow) triggerRow.classList.toggle('expanded', !isOpen);
         }
 
-        // Alert Helper
+        // Alert Helper (Now Toast Notifications)
         function showAlert(view, type, message) {
-            const el = document.getElementById(`${view}-alert`);
-            el.className = `alert ${type}`;
-            el.textContent = message;
+            const container = document.getElementById('toast-container');
+            if (!container) return;
 
-            if(type === 'success' || type === 'error'){
-                setTimeout(() => { el.style.display = 'none'; }, 8000);
-            }
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            // Add icon based on type
+            let icon = '';
+            if (type === 'success') icon = '✓';
+            else if (type === 'error') icon = '⚠';
+            else icon = 'ℹ';
+
+            toast.innerHTML = `<span style="font-size: 1.2rem;">${icon}</span> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+
+            // Remove after animation (4.6s + 0.4s fadeOut)
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 5000);
         }
 
         // =====================================================================
@@ -745,4 +775,90 @@
             overlay.classList.remove('open');
             iframe.src = '';
             document.body.style.overflow = '';
+        }
+
+        // =====================================================================
+        //  REAL-TIME VALIDATION
+        // =====================================================================
+        const formFields = [
+            'form-name', 'form-phone', 'form-email', 
+            'form-station', 'form-address', 'form-purpose'
+        ];
+
+        function getWordCount(str) {
+            return str.trim().split(/\s+/).filter(word => word.length > 0).length;
+        }
+
+        function validateField(el, isBlur) {
+            let isValid = true;
+            let errorMsg = '';
+            
+            // Mark as touched on blur
+            if (isBlur) el.dataset.touched = 'true';
+            
+            const isTouched = el.dataset.touched === 'true';
+
+            // Base Native HTML Validation
+            if (!el.checkValidity()) {
+                isValid = false;
+                errorMsg = el.validationMessage;
+            }
+
+            // Custom Purpose (Word Count) logic
+            if (el.id === 'form-purpose' && el.value.trim().length > 0) {
+                const words = getWordCount(el.value);
+                if (words > 300) {
+                    isValid = false;
+                    errorMsg = `Maximum 300 words allowed. Currently at ${words} words.`;
+                }
+            }
+
+            // Custom Phone logic (ensure exactly 10 digits if valid otherwise)
+            if (el.id === 'form-phone' && el.value.length > 0 && !/^\d{10}$/.test(el.value)) {
+                isValid = false;
+                errorMsg = 'Please enter exactly a 10-digit phone number.';
+            }
+
+            const msgEl = el.nextElementSibling;
+
+            if (isValid && el.value.trim() !== '') {
+                // Eager valid
+                el.classList.add('is-valid');
+                el.classList.remove('is-invalid');
+                if (msgEl) msgEl.textContent = '';
+            } else if (!isValid && isTouched) {
+                // Lazy invalid (only show error if touched)
+                el.classList.remove('is-valid');
+                el.classList.add('is-invalid');
+                if (msgEl) msgEl.textContent = errorMsg;
+            } else {
+                // Reset styling if empty or untouched invalid
+                el.classList.remove('is-valid');
+                el.classList.remove('is-invalid');
+                if (msgEl) msgEl.textContent = '';
+            }
+            
+            return isValid;
+        }
+
+        formFields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => validateField(el, false));
+                el.addEventListener('blur', () => validateField(el, true));
+                el.addEventListener('change', () => validateField(el, false)); // For select
+            }
+        });
+
+        function validateAllFields() {
+            let allValid = true;
+            formFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (!validateField(el, true)) {
+                        allValid = false;
+                    }
+                }
+            });
+            return allValid;
         }
