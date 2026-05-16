@@ -95,7 +95,7 @@
             btnSubmit.disabled = true;
 
             // Inject skeletons
-            for (let i = 0; i < 9; i++) {
+            for (let i = 0; i < 12; i++) {
                 grid.innerHTML += '<div class="skeleton skeleton-slot"></div>';
                 modalGrid.innerHTML += '<div class="skeleton skeleton-slot"></div>';
             }
