@@ -2,7 +2,7 @@
         // ==========================================================
         // SETUP: Apps Script Web App URL
         // ==========================================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpJ-K0eQDiJSU0-lxN6NBmdtMzZHomxPk1u1xXr6uzIP60f1TcIxbRzhREdU2Y-8uK/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx75RovioANoWPUaWl-BYAEV-jW0hhJTbbaJeasA2pKSyEXldx6v_germw2w8MiBGbp/exec';
 
         let currentDate = '';
         let allBookingsCache = [];
