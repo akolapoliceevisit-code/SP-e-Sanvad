@@ -101,6 +101,25 @@
             border-right: 1px solid var(--border);
         }
 
+        #lang-toggle {
+            background: var(--bg);
+            color: var(--ink-muted);
+            border: none;
+            border-left: 1px solid var(--border);
+            cursor: pointer;
+            padding: 0.5rem 0.75rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+
+        #lang-toggle:hover {
+            color: var(--ink);
+            background: var(--border-light);
+        }
+
         .nav-buttons button:hover {
             color: var(--ink);
             background: var(--border-light);

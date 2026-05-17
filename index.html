@@ -39,8 +39,9 @@
             <h1>SP-e Samvaad</h1>
         </div>
         <div class="nav-buttons">
-            <button class="active" onclick="switchTab('booking')">Book Slot</button>
-            <button onclick="switchTab('admin')">Admin</button>
+            <button class="active" onclick="switchTab('booking')" data-i18n="nav_booking">Book Slot</button>
+            <button onclick="switchTab('admin')" data-i18n="nav_admin">Admin</button>
+            <button id="lang-toggle" onclick="toggleLanguage()" title="Switch language">मराठी</button>
         </div>
     </header>
 
@@ -51,26 +52,26 @@
             <div class="card">
                 <div class="card-header">
                     <img src="./assests/logo.jpeg" alt="Akola Police Logo" class="card-header-logo">
-                    <h2>Schedule a Meeting with SP Akola</h2>
-                    <p>Book a 5-minute Google Meet slot available daily from 6:00 PM to 7:00 PM.</p>
+                    <h2 data-i18n="booking_title">Schedule a Meeting with SP Akola</h2>
+                    <p data-i18n="booking_subtitle">Book a 5-minute Google Meet slot available daily from 6:00 PM to 7:00 PM.</p>
                 </div>
 
 
                 <form id="booking-form">
-                    <div class="section-label">Date &amp; Time</div>
+                    <div class="section-label" data-i18n="section_datetime">Date &amp; Time</div>
 
                     <div class="form-group">
-                        <label>Select Date</label>
+                        <label data-i18n="label_date">Select Date</label>
                         <input type="date" id="date-picker" required>
                     </div>
 
                     <div class="form-group slots-container">
-                        <label>Available Slots</label>
+                        <label data-i18n="label_slots">Available Slots</label>
 
 
                         <!-- Mobile: compact trigger button -->
                         <button type="button" id="mobile-slot-trigger" class="mobile-slot-trigger" onclick="openSlotModal()">
-                            <span id="mobile-slot-label">Tap to select a time slot</span>
+                            <span id="mobile-slot-label" data-i18n="slot_select_prompt">Tap to select a time slot</span>
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </button>
 
@@ -84,32 +85,32 @@
 
 
                     <div class="divider"></div>
-                    <div class="section-label">Your Details</div>
+                    <div class="section-label" data-i18n="section_details">Your Details</div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Name / नाव *</label>
+                            <label data-i18n="label_name">Name / नाव *</label>
                             <input type="text" id="form-name" placeholder="Full name" minlength="3" required>
                             <small class="validation-msg"></small>
                         </div>
                         <div class="form-group">
-                            <label>Phone / फोन नंबर *</label>
+                            <label data-i18n="label_phone">Phone / फोन नंबर *</label>
                             <input type="tel" id="form-phone" placeholder="10-digit number" pattern="\d{10}" minlength="10" maxlength="10" required>
                             <small class="validation-msg"></small>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Email / ई-मेल *</label>
+                        <label data-i18n="label_email">Email / ई-मेल *</label>
                         <input type="email" id="form-email" placeholder="you@example.com" required>
                         <small class="validation-msg"></small>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Police Station / पोलीस स्टेशन *</label>
+                            <label data-i18n="label_station">Police Station / पोलीस स्टेशन *</label>
                             <select id="form-station" required>
-                                <option value="" disabled selected>Select station</option>
+                                <option value="" disabled selected data-i18n="station_placeholder">Select station</option>
                                 <option value="City Kotwali">City Kotwali</option>
                                 <option value="Ramdaspeth">Ramdaspeth</option>
                                 <option value="Civil Lines">Civil Lines</option>
@@ -139,21 +140,21 @@
                             <small class="validation-msg"></small>
                         </div>
                         <div class="form-group">
-                            <label>Address / पत्ता *</label>
+                            <label data-i18n="label_address">Address / पत्ता *</label>
                             <input type="text" id="form-address" placeholder="Village / City" minlength="3" required>
                             <small class="validation-msg"></small>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Complaint Details / तक्रार (थोडक्यात) <span style="color:var(--ink-muted);font-weight:400;">(Optional)</span></label>
-                        <textarea id="form-purpose" rows="4" placeholder="Briefly describe your complaint... (Max 300 words)"></textarea>
+                        <label data-i18n="label_purpose">Complaint Details / तक्रार (थोडक्यात) <span style="color:var(--ink-muted);font-weight:400;" data-i18n="label_optional">(Optional)</span></label>
+                        <textarea id="form-purpose" rows="4" placeholder="Briefly describe your complaint... (Max 300 words)" data-i18n-placeholder="purpose_placeholder"></textarea>
                         <small class="validation-msg"></small>
                     </div>
 
                     <!-- Document Upload (Optional) -->
                     <div class="form-group">
-                        <label>Attach Documents / कागदपत्रे जोडा <span style="color:var(--ink-muted);font-weight:400;">(Optional)</span></label>
+                        <label data-i18n="label_documents">Attach Documents / कागदपत्रे जोडा <span style="color:var(--ink-muted);font-weight:400;" data-i18n="label_optional">(Optional)</span></label>
                         <div id="upload-dropzone" class="upload-dropzone">
                             <div class="upload-dropzone-content">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -161,8 +162,8 @@
                                     <polyline points="17 8 12 3 7 8"/>
                                     <line x1="12" y1="3" x2="12" y2="15"/>
                                 </svg>
-                                <span>Click or drag files here</span>
-                                <small>JPG, PNG (max 256 KB) &middot; PDF, DOC, DOCX (max 6 MB) &middot; Total 10 MB</small>
+                                <span data-i18n="upload_prompt">Click or drag files here</span>
+                                <small data-i18n="upload_limits">JPG, PNG (max 256 KB) · PDF, DOC, DOCX (max 6 MB) · Total 10 MB</small>
                             </div>
                             <input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" />
                         </div>
@@ -172,7 +173,7 @@
                         <div id="upload-error" class="upload-error"></div>
                     </div>
 
-                    <button type="submit" id="btn-submit" class="btn-submit" disabled>Book Meeting</button>
+                    <button type="submit" id="btn-submit" class="btn-submit" disabled data-i18n="btn_book">Book Meeting</button>
                 </form>
             </div>
         </div>
@@ -182,35 +183,36 @@
             <div class="card">
                 <div class="card-header">
                     <img src="./assests/logo.jpeg" alt="Akola Police Logo" class="card-header-logo">
-                    <h2>Admin Dashboard</h2>
-                    <p>View and manage all scheduled meetings — filtered by date.</p>
+                    <h2 data-i18n="admin_title">Admin Dashboard</h2>
+                    <p data-i18n="admin_subtitle">View and manage all scheduled meetings — filtered by date.</p>
                 </div>
 
                 <div id="admin-login" class="form-group">
-                    <label>Admin Password</label>
+                    <label data-i18n="admin_password_label">Admin Password</label>
                     <div style="display: flex; gap: 10px;">
-                        <input type="password" id="admin-pass" placeholder="Enter password" style="flex:1;">
-                        <button class="btn-submit btn-sm" onclick="loginAdmin()">Login</button>
+                        <input type="password" id="admin-pass" placeholder="Enter password" style="flex:1;" data-i18n-placeholder="admin_password_placeholder">
+                        <button class="btn-submit btn-sm" onclick="loginAdmin()" data-i18n="btn_login">Login</button>
                     </div>
                 </div>
 
 
                 <div id="admin-content" style="display: none;">
 
-                    <div class="section-label">Filter by Date</div>
+                    <div class="section-label" data-i18n="admin_filter_label">Filter by Date</div>
                     <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
                         <div style="flex:1; min-width: 150px;">
                             <input type="date" id="admin-date-picker">
                         </div>
-                        <button class="btn-submit btn-sm" onclick="loadAdminData()">Load</button>
-                        <button class="btn-submit btn-sm" style="background:var(--bg);color:var(--ink);border-color:var(--border);" onclick="loadAllBookings()">Show All</button>
+                        <button class="btn-submit btn-sm" onclick="loadAdminData()" data-i18n="btn_load">Load</button>
+                        <button class="btn-submit btn-sm" style="background:var(--bg);color:var(--ink);border-color:var(--border);" onclick="loadAllBookings()" data-i18n="btn_show_all">Show All</button>
+                        <button class="btn-submit btn-sm" style="background:var(--success-text);" onclick="exportCSV()" data-i18n="btn_export_csv">↓ Export CSV</button>
                     </div>
 
                     <div class="divider"></div>
 
                     <div class="admin-header">
-                        <h3 id="admin-title">Bookings</h3>
-                        <button class="btn-submit btn-sm" onclick="loadAdminData()">↻ Refresh</button>
+                        <h3 id="admin-title" data-i18n="admin_bookings_title">Bookings</h3>
+                        <button class="btn-submit btn-sm" onclick="loadAdminData()" data-i18n="btn_refresh">↻ Refresh</button>
                     </div>
 
                     <!-- Wrapper added to fix table clipping on smaller screens -->
@@ -218,13 +220,13 @@
                         <table class="admin-table" style="min-width: 800px; width: 100%;">
                             <thead>
                                 <tr>
-                                    <th>Time Slot</th>
-                                    <th>Citizen Details</th>
-                                    <th>Station</th>
-                                    <th style="min-width: 140px;">Docs</th>
-                                    <th>Meet Link</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th data-i18n="th_timeslot">Time Slot</th>
+                                    <th data-i18n="th_citizen">Citizen Details</th>
+                                    <th data-i18n="th_station">Station</th>
+                                    <th style="min-width: 140px;" data-i18n="th_docs">Docs</th>
+                                    <th data-i18n="th_meet">Meet Link</th>
+                                    <th data-i18n="th_status">Status</th>
+                                    <th data-i18n="th_actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-tbody">
@@ -242,7 +244,7 @@
     <div id="slot-modal-overlay" class="slot-modal-overlay" onclick="closeSlotModal(event)">
         <div class="slot-modal" onclick="event.stopPropagation()">
             <div class="slot-modal-header">
-                <h3>Select a Time Slot</h3>
+                <h3 data-i18n="modal_select_slot">Select a Time Slot</h3>
                 <button type="button" class="slot-modal-close" onclick="closeSlotModal()">&times;</button>
             </div>
             <div id="modal-slots-grid" class="slots-grid modal-slots-grid">
@@ -255,15 +257,15 @@
     <div id="doc-preview-overlay" class="doc-preview-overlay" onclick="closeDocPreview(event)">
         <div class="doc-preview-modal" onclick="event.stopPropagation()">
             <div class="doc-preview-header">
-                <h3 id="doc-preview-title">Document Preview</h3>
+                <h3 id="doc-preview-title" data-i18n="doc_preview_title">Document Preview</h3>
                 <div class="doc-preview-actions">
-                    <a id="doc-preview-newTab" href="#" target="_blank" class="doc-preview-open">Open ↗</a>
+                    <a id="doc-preview-newTab" href="#" target="_blank" class="doc-preview-open" data-i18n="doc_open_tab">Open ↗</a>
                     <button type="button" class="slot-modal-close" onclick="closeDocPreview()">&times;</button>
                 </div>
             </div>
             <div class="doc-preview-body">
                 <div id="doc-preview-loading" class="doc-preview-loading">
-                    <div class="loader"></div> Loading preview...
+                    <div class="loader"></div> <span data-i18n="doc_loading">Loading preview...</span>
                 </div>
                 <iframe id="doc-preview-iframe" src="" frameborder="0" allowfullscreen></iframe>
             </div>
@@ -282,17 +284,17 @@
                     <line x1="14" y1="11" x2="14" y2="17"></line>
                 </svg>
             </div>
-            <h3 class="delete-confirm-title">Delete Booking?</h3>
-            <p class="delete-confirm-text" id="delete-confirm-message">Are you sure you want to delete this booking? This action cannot be undone.</p>
+            <h3 class="delete-confirm-title" data-i18n="delete_title">Delete Booking?</h3>
+            <p class="delete-confirm-text" id="delete-confirm-message" data-i18n="delete_message">Are you sure you want to delete this booking? This action cannot be undone.</p>
             <div class="delete-confirm-actions">
-                <button type="button" class="btn-submit" style="background: var(--surface); color: var(--ink); border: 1px solid var(--border);" onclick="closeDeleteConfirm()">Cancel</button>
-                <button type="button" class="btn-submit" style="background: var(--error-text);" id="delete-confirm-btn">Delete</button>
+                <button type="button" class="btn-submit" style="background: var(--surface); color: var(--ink); border: 1px solid var(--border);" onclick="closeDeleteConfirm()" data-i18n="btn_cancel">Cancel</button>
+                <button type="button" class="btn-submit" style="background: var(--error-text);" id="delete-confirm-btn" data-i18n="btn_delete">Delete</button>
             </div>
         </div>
     </div>
 
     <footer class="footer">
-        <span>SP-e Samvaad &middot; SP Office, Akola District &middot; Maharashtra Police</span>
+        <span data-i18n="footer_text">SP-e Samvaad · SP Office, Akola District · Maharashtra Police</span>
     </footer>
 
     <!-- Toast Notification Container -->

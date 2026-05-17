@@ -8,6 +8,196 @@
         let allBookingsCache = [];
         let selectedFiles = [];   // Array of { file: File, valid: boolean, error: string }
         let adminToken = null;
+        let currentLang = localStorage.getItem('sp_lang') || 'en';
+
+        const I18N = {
+            en: {
+                nav_booking: 'Book Slot',
+                nav_admin: 'Admin',
+                booking_title: 'Schedule a Meeting with SP Akola',
+                booking_subtitle: 'Book a 5-minute Google Meet slot available daily from 6:00 PM to 7:00 PM.',
+                section_datetime: 'Date & Time',
+                label_date: 'Select Date',
+                label_slots: 'Available Slots',
+                slot_select_prompt: 'Tap to select a time slot',
+                section_details: 'Your Details',
+                label_name: 'Name / नाव *',
+                label_phone: 'Phone / फोन नंबर *',
+                label_email: 'Email / ई-मेल *',
+                label_station: 'Police Station / पोलीस स्टेशन *',
+                station_placeholder: 'Select station',
+                label_address: 'Address / पत्ता *',
+                label_purpose: 'Complaint Details / तक्रार (थोडक्यात) <span style="color:var(--ink-muted);font-weight:400;">(Optional)</span>',
+                label_documents: 'Attach Documents / कागदपत्रे जोडा <span style="color:var(--ink-muted);font-weight:400;">(Optional)</span>',
+                label_optional: '(Optional)',
+                upload_prompt: 'Click or drag files here',
+                upload_limits: 'JPG, PNG (max 256 KB) · PDF, DOC, DOCX (max 6 MB) · Total 10 MB',
+                btn_book: 'Book Meeting',
+                admin_title: 'Admin Dashboard',
+                admin_subtitle: 'View and manage all scheduled meetings — filtered by date.',
+                admin_password_label: 'Admin Password',
+                admin_password_placeholder: 'Enter password',
+                btn_login: 'Login',
+                admin_filter_label: 'Filter by Date',
+                btn_load: 'Load',
+                btn_show_all: 'Show All',
+                export_label: 'Export Bookings',
+                export_from: 'From',
+                export_to: 'To',
+                btn_export_csv: '↓ Export CSV',
+                admin_bookings_title: 'Bookings',
+                btn_refresh: '↻ Refresh',
+                th_timeslot: 'Time Slot',
+                th_citizen: 'Citizen Details',
+                th_station: 'Station',
+                th_docs: 'Docs',
+                th_meet: 'Meet Link',
+                th_status: 'Status',
+                th_actions: 'Actions',
+                modal_select_slot: 'Select a Time Slot',
+                doc_preview_title: 'Document Preview',
+                doc_open_tab: 'Open ↗',
+                doc_loading: 'Loading preview...',
+                delete_title: 'Delete Booking?',
+                delete_message: 'Are you sure you want to delete this booking? This action cannot be undone.',
+                btn_cancel: 'Cancel',
+                btn_delete: 'Delete',
+                footer_text: 'SP-e Samvaad · SP Office, Akola District · Maharashtra Police',
+                toast_booking_success: 'Meeting booked successfully. Check your email for the Google Meet link.',
+                toast_booking_error: 'Booking failed. Please try again.',
+                toast_network_error: 'Network error. Please check your connection and try again.',
+                toast_slots_error: 'Failed to load slots. Please try again.',
+                toast_slots_weekend: 'Slot booking is not available on Saturdays and Sundays.',
+                toast_slots_weekend_inline: 'Booking is closed on weekends (Saturday & Sunday).',
+                toast_slots_weekend_modal: 'Booking is closed on weekends.',
+                toast_invalid_files: 'Please remove invalid files before submitting.',
+                toast_form_errors: 'Please fix the errors in the form before submitting.',
+                toast_login_error: 'Incorrect password.',
+                toast_login_network: 'Network error during login.',
+                toast_load_failed: 'Failed to load data.',
+                toast_no_bookings: 'No bookings found for this date.',
+                toast_delete_success: 'Booking deleted successfully.',
+                toast_delete_failed: 'Failed to delete booking.',
+                toast_delete_network: 'Network error. Please try again.',
+                toast_csv_no_data: 'No bookings found for the selected date range.',
+                toast_csv_error: 'Failed to export CSV. Please try again.',
+                toast_csv_unauthorized: 'Session expired. Please log in again.',
+                detail_label: 'Complaint Details / तक्रार',
+                join_meet: 'Join Meet →',
+                preview: 'Preview',
+                doc_prefix: 'Doc',
+                delete_confirm_msg_prefix: 'Are you sure you want to delete the booking for <strong>',
+                delete_confirm_msg_suffix: '</strong>?<br>This action cannot be undone.',
+                lang_toggle_label: 'मराठी',
+                weekend_closed_msg: 'Booking is closed on weekends (Saturday & Sunday).',
+                weekend_closed_modal: 'Booking is closed on weekends.'
+            },
+            mr: {
+                nav_booking: 'स्लॉट बुक करा',
+                nav_admin: 'ॲडमिन',
+                booking_title: 'पोलीस अधीक्षक, अकोला यांच्याशी भेट निश्चित करा',
+                booking_subtitle: 'दररोज संध्याकाळी ६:०० ते ७:०० दरम्यान ५ मिनिटांचा Google Meet स्लॉट बुक करा.',
+                section_datetime: 'तारीख आणि वेळ',
+                label_date: 'तारीख निवडा',
+                label_slots: 'उपलब्ध स्लॉट्स',
+                slot_select_prompt: 'वेळ स्लॉट निवडण्यासाठी टॅप करा',
+                section_details: 'तुमची माहिती',
+                label_name: 'नाव / Name *',
+                label_phone: 'फोन नंबर / Phone *',
+                label_email: 'ई-मेल / Email *',
+                label_station: 'पोलीस स्टेशन / Police Station *',
+                station_placeholder: 'स्टेशन निवडा',
+                label_address: 'पत्ता / Address *',
+                label_purpose: 'तक्रार (थोडक्यात) / Complaint Details <span style="color:var(--ink-muted);font-weight:400;">(पर्यायी)</span>',
+                label_documents: 'कागदपत्रे जोडा / Attach Documents <span style="color:var(--ink-muted);font-weight:400;">(पर्यायी)</span>',
+                label_optional: '(पर्यायी)',
+                upload_prompt: 'येथे क्लिक करा किंवा फाइल ड्रॅग करा',
+                upload_limits: 'JPG, PNG (जास्तीत जास्त २५६ KB) · PDF, DOC, DOCX (जास्तीत जास्त ६ MB) · एकूण १० MB',
+                btn_book: 'भेट बुक करा',
+                admin_title: 'ॲडमिन डॅशबोर्ड',
+                admin_subtitle: 'तारीखानुसार सर्व नियोजित बैठका पहा आणि व्यवस्थापित करा.',
+                admin_password_label: 'ॲडमिन पासवर्ड',
+                admin_password_placeholder: 'पासवर्ड टाका',
+                btn_login: 'लॉगिन',
+                admin_filter_label: 'तारखेनुसार फिल्टर',
+                btn_load: 'लोड',
+                btn_show_all: 'सर्व पहा',
+                export_label: 'बुकिंग एक्सपोर्ट',
+                export_from: 'पासून',
+                export_to: 'पर्यंत',
+                btn_export_csv: '↓ CSV डाउनलोड',
+                admin_bookings_title: 'बुकिंग्स',
+                btn_refresh: '↻ रीफ्रेश',
+                th_timeslot: 'वेळ स्लॉट',
+                th_citizen: 'नागरिक माहिती',
+                th_station: 'स्टेशन',
+                th_docs: 'कागदपत्रे',
+                th_meet: 'मीट लिंक',
+                th_status: 'स्थिती',
+                th_actions: 'कृती',
+                modal_select_slot: 'वेळ स्लॉट निवडा',
+                doc_preview_title: 'कागदपत्र पूर्वावलोकन',
+                doc_open_tab: 'उघडा ↗',
+                doc_loading: 'लोड होत आहे...',
+                delete_title: 'बुकिंग हटवायचे?',
+                delete_message: 'तुम्हाला खात्री आहे की हे बुकिंग हटवायचे आहे? ही क्रिया पूर्ववत करता येणार नाही.',
+                btn_cancel: 'रद्द करा',
+                btn_delete: 'हटवा',
+                footer_text: 'SP-e संवाद · पोलीस अधीक्षक कार्यालय, अकोला जिल्हा · महाराष्ट्र पोलीस',
+                toast_booking_success: 'भेट यशस्वीरित्या बुक झाली. Google Meet लिंकसाठी तुमचा ई-मेल तपासा.',
+                toast_booking_error: 'बुकिंग अयशस्वी. कृपया पुन्हा प्रयत्न करा.',
+                toast_network_error: 'नेटवर्क त्रुटी. कृपया तुमचे कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.',
+                toast_slots_error: 'स्लॉट्स लोड करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा.',
+                toast_slots_weekend: 'शनिवार आणि रविवारी स्लॉट बुकिंग उपलब्ध नाही.',
+                toast_slots_weekend_inline: 'वीकेंडवर (शनिवार आणि रविवार) बुकिंग बंद आहे.',
+                toast_slots_weekend_modal: 'वीकेंडवर बुकिंग बंद आहे.',
+                toast_invalid_files: 'कृपया सबमिट करण्यापूर्वी अवैध फाइल्स काढून टाका.',
+                toast_form_errors: 'कृपया सबमिट करण्यापूर्वी फॉर्ममधील त्रुटी दुरुस्त करा.',
+                toast_login_error: 'चुकीचा पासवर्ड.',
+                toast_login_network: 'लॉगिन दरम्यान नेटवर्क त्रुटी.',
+                toast_load_failed: 'डेटा लोड करण्यात अयशस्वी.',
+                toast_no_bookings: 'या तारखेसाठी कोणतेही बुकिंग आढळले नाही.',
+                toast_delete_success: 'बुकिंग यशस्वीरित्या हटवले.',
+                toast_delete_failed: 'बुकिंग हटवण्यात अयशस्वी.',
+                toast_delete_network: 'नेटवर्क त्रुटी. कृपया पुन्हा प्रयत्न करा.',
+                toast_csv_no_data: 'निवडलेल्या तारीख श्रेणीसाठी कोणतेही बुकिंग आढळले नाही.',
+                toast_csv_error: 'CSV एक्सपोर्ट अयशस्वी. कृपया पुन्हा प्रयत्न करा.',
+                toast_csv_unauthorized: 'सत्र समाप्त झाले. कृपया पुन्हा लॉगिन करा.',
+                detail_label: 'तक्रार / Complaint Details',
+                join_meet: 'मीट मध्ये सामील व्हा →',
+                preview: 'पूर्वावलोकन',
+                doc_prefix: 'कागद',
+                delete_confirm_msg_prefix: 'तुम्हाला <strong>',
+                delete_confirm_msg_suffix: '</strong> या वेळेचे बुकिंग हटवायचे आहे?<br>ही क्रिया पूर्ववत करता येणार नाही.',
+                lang_toggle_label: 'English',
+                weekend_closed_msg: 'वीकेंडवर (शनिवार आणि रविवार) बुकिंग बंद आहे.',
+                weekend_closed_modal: 'वीकेंडवर बुकिंग बंद आहे.'
+            }
+        };
+
+        function t(key) {
+            return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.en[key]) || key;
+        }
+
+        function applyLanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.innerHTML = t(key);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                el.placeholder = t(key);
+            });
+            const langBtn = document.getElementById('lang-toggle');
+            if (langBtn) langBtn.textContent = t('lang_toggle_label');
+            document.documentElement.lang = currentLang === 'mr' ? 'mr' : 'en';
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'mr' : 'en';
+            localStorage.setItem('sp_lang', currentLang);
+            applyLanguage();
+        }
 
         function escapeHTML(str) {
             if (str == null) return '';
@@ -34,6 +224,8 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            applyLanguage();
+
             const dateInput = document.getElementById('date-picker');
             
             // Get local YYYY-MM-DD
@@ -102,7 +294,7 @@
 
             // Reset mobile trigger
             mobileTrigger.classList.remove('has-selection');
-            mobileLabel.textContent = 'Tap to select a time slot';
+            mobileLabel.textContent = t('slot_select_prompt');
 
             if(SCRIPT_URL === 'YOUR_WEB_APP_URL_HERE'){
                  grid.innerHTML = '';
@@ -117,9 +309,9 @@
             const dayOfWeek = selectedDateObj.getDay();
             
             if (dayOfWeek === 0 || dayOfWeek === 6) {
-                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: var(--error-text); padding: 1.5rem; background: var(--error-bg); border-radius: var(--radius);">Booking is closed on weekends (Saturday & Sunday).</div>';
-                modalGrid.innerHTML = '<div style="text-align: center; color: var(--error-text); padding: 1.5rem;">Booking is closed on weekends.</div>';
-                showAlert('booking', 'error', 'Slot booking is not available on Saturdays and Sundays.');
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: var(--error-text); padding: 1.5rem; background: var(--error-bg); border-radius: var(--radius);">' + t('weekend_closed_msg') + '</div>';
+                modalGrid.innerHTML = '<div style="text-align: center; color: var(--error-text); padding: 1.5rem;">' + t('weekend_closed_modal') + '</div>';
+                showAlert('booking', 'error', t('toast_slots_weekend'));
                 return;
             }
 
@@ -163,7 +355,7 @@
             } catch (err) {
                 grid.innerHTML = '';
                 modalGrid.innerHTML = '';
-                showAlert('booking', 'error', 'Failed to load slots. Please try again.');
+                showAlert('booking', 'error', t('toast_slots_error'));
             }
         }
 
@@ -356,13 +548,13 @@
             // Check if any invalid files exist
             const hasInvalidFiles = selectedFiles.some(f => !f.valid);
             if (hasInvalidFiles) {
-                showAlert('booking', 'error', 'Please remove invalid files before submitting.');
+                showAlert('booking', 'error', t('toast_invalid_files'));
                 return;
             }
 
             // Real-time validation check
             if (!validateAllFields()) {
-                showAlert('booking', 'error', 'Please fix the errors in the form before submitting.');
+                showAlert('booking', 'error', t('toast_form_errors'));
                 return;
             }
 
@@ -402,7 +594,7 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    showAlert('booking', 'success', `Meeting booked successfully. Check your email for the Google Meet link.`);
+                    showAlert('booking', 'success', t('toast_booking_success'));
                     document.getElementById('booking-form').reset();
                     selectedFiles = [];
                     renderFileList();
@@ -411,11 +603,11 @@
                     currentDate = today;
                     fetchSlots(currentDate);
                 } else {
-                    showAlert('booking', 'error', result.message || 'Booking failed. Please try again.');
+                    showAlert('booking', 'error', result.message || t('toast_booking_error'));
                     fetchSlots(currentDate);
                 }
             } catch (err) {
-                showAlert('booking', 'error', err.message || 'Network error. Please check your connection and try again.');
+                showAlert('booking', 'error', err.message || t('toast_network_error'));
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
@@ -507,10 +699,10 @@
                     document.getElementById('admin-content').style.display = 'block';
                     loadAdminData();
                 } else {
-                    showAlert('admin', 'error', result.message || 'Incorrect password.');
+                    showAlert('admin', 'error', result.message || t('toast_login_error'));
                 }
             } catch (err) {
-                showAlert('admin', 'error', 'Network error during login.');
+                showAlert('admin', 'error', t('toast_login_network'));
             }
         }
 
@@ -560,7 +752,7 @@
 
                 renderAdminTable(filtered);
             } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--error-text);">Failed to load data.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--error-text);">' + t('toast_load_failed') + '</td></tr>';
             }
         }
 
@@ -589,7 +781,7 @@
                 title.textContent = `All Bookings (${data.length})`;
                 renderAdminTable(data);
             } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--error-text);">Failed to load data.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--error-text);">' + t('toast_load_failed') + '</td></tr>';
             }
         }
 
@@ -601,7 +793,7 @@
             tbody.innerHTML = '';
 
             if (rows.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--ink-muted);">No bookings found for this date.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--ink-muted);">' + t('toast_no_bookings') + '</td></tr>';
                 return;
             }
 
@@ -627,16 +819,16 @@
                 
                 let validLink = '';
                 if (link && typeof link === 'string' && link.startsWith('http')) validLink = link;
-                const linkHtml    = validLink && validLink !== '\u2014' ? `<a href="${escapeHTML(validLink)}" target="_blank">Join Meet \u2192</a>` : '\u2014';
+                const linkHtml    = validLink && validLink !== '\u2014' ? `<a href="${escapeHTML(validLink)}" target="_blank">${t('join_meet')}</a>` : '\u2014';
 
                 // Build docs column
                 let docsHtml = '\u2014';
                 if (docs && docs !== '\u2014' && docs.trim() !== '') {
                     const docLinks = docs.split(',').map(l => l.trim()).filter(l => l.startsWith('http'));
                     if (docLinks.length === 1) {
-                        docsHtml = `<button type="button" class="doc-preview-btn" onclick="openDocPreview('${escapeHTML(docLinks[0])}', '${escapeHTML(name)}')">Preview</button>`;
+                        docsHtml = `<button type="button" class="doc-preview-btn" onclick="openDocPreview('${escapeHTML(docLinks[0])}', '${escapeHTML(name)}')">${t('preview')}</button>`;
                     } else if (docLinks.length > 1) {
-                        docsHtml = docLinks.map((l, idx) => `<button type="button" class="doc-preview-btn" onclick="openDocPreview('${escapeHTML(l)}', '${escapeHTML(name)} - Doc ${idx + 1}')">Doc ${idx + 1}</button>`).join(' ');
+                        docsHtml = docLinks.map((l, idx) => `<button type="button" class="doc-preview-btn" onclick="openDocPreview('${escapeHTML(l)}', '${escapeHTML(name)} - ${t('doc_prefix')} ${idx + 1}')">${t('doc_prefix')} ${idx + 1}</button>`).join(' ');
                     }
                 }
 
@@ -656,12 +848,12 @@
                         <td style="min-width: 140px;">${docsHtml}</td>
                         <td style="white-space:nowrap;">${linkHtml}</td>
                         <td><span class="status-badge ${statusClass}">${status}</span></td>
-                        <td><button type="button" class="doc-preview-btn" style="color:var(--error-text);border-color:rgba(176,0,32,0.3);" onclick="event.stopPropagation(); confirmDeleteBooking('${escapeHTML(String(slot)).replace(/'/g, "\\'")}', '${escapeHTML(String(phone)).replace(/'/g, "\\'")}')">Delete</button></td>
+                        <td><button type="button" class="doc-preview-btn" style="color:var(--error-text);border-color:rgba(176,0,32,0.3);" onclick="event.stopPropagation(); confirmDeleteBooking('${escapeHTML(String(slot)).replace(/'/g, "\\'")}', '${escapeHTML(String(phone)).replace(/'/g, "\\'")}')">${t('btn_delete')}</button></td>
                     </tr>
                     <tr class="detail-row" id="${detailId}" style="display:none;">
                         <td colspan="7">
                             <div class="detail-row-content">
-                                <span class="detail-label">Complaint Details / \u0924\u0915\u094d\u0930\u093e\u0930</span>
+                                <span class="detail-label">${t('detail_label')}</span>
                                 <p class="detail-text">${purpose}</p>
                             </div>
                         </td>
@@ -926,4 +1118,59 @@
                 }
             });
             return allValid;
+        }
+
+        // =====================================================================
+        //  ADMIN — Export Bookings to CSV
+        // =====================================================================
+        async function exportCSV() {
+            const filterDate = document.getElementById('admin-date-picker').value;
+
+            if (!filterDate) {
+                showAlert('admin', 'error', 'Please select a date first, then click Export CSV.');
+                return;
+            }
+
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.innerHTML = '<div class="loader" style="border-top-color:#fff;border-color:rgba(255,255,255,0.2); width:14px; height:14px; display:inline-block;"></div>';
+            btn.disabled = true;
+
+            try {
+                const params = new URLSearchParams({
+                    action: 'exportCsv',
+                    token: adminToken,
+                    startDate: filterDate,
+                    endDate: filterDate
+                });
+
+                const response = await fetch(`${SCRIPT_URL}?${params.toString()}`);
+                const contentType = response.headers.get('Content-Type') || '';
+
+                if (contentType.includes('application/json') || contentType.includes('text/plain')) {
+                    const result = await response.json();
+                    if (result.success === false) {
+                        showAlert('admin', 'error', result.message || 'Export failed.');
+                        if (result.message && result.message.includes('Unauthorized')) logoutAdmin();
+                        return;
+                    }
+                }
+
+                const blob = await response.blob();
+                const url  = window.URL.createObjectURL(blob);
+                const a    = document.createElement('a');
+                a.href     = url;
+                a.download = `bookings_${filterDate}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showAlert('admin', 'success', 'CSV exported successfully!');
+            } catch (err) {
+                showAlert('admin', 'error', 'Network error during export. Please try again.');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
         }
