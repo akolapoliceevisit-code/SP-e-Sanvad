@@ -1127,14 +1127,18 @@
             const filterDate = document.getElementById('admin-date-picker').value;
 
             if (!filterDate) {
-                showAlert('admin', 'error', 'Please select a date first, then click Export CSV.');
+                showAlert('admin', 'error', t('toast_csv_error') || 'Please select a date first, then click Export CSV.');
                 return;
             }
 
-            const btn = event.target;
-            const originalText = btn.textContent;
-            btn.innerHTML = '<div class="loader" style="border-top-color:#fff;border-color:rgba(255,255,255,0.2); width:14px; height:14px; display:inline-block;"></div>';
-            btn.disabled = true;
+            // Find button safely (onclick="exportCSV()" doesn't pass event)
+            const btn = document.querySelector('[data-i18n="btn_export_csv"]');
+            let originalText = '';
+            if (btn) {
+                originalText = btn.textContent;
+                btn.innerHTML = '<div class="loader" style="border-top-color:#fff;border-color:rgba(255,255,255,0.2); width:14px; height:14px; display:inline-block;"></div>';
+                btn.disabled = true;
+            }
 
             try {
                 const params = new URLSearchParams({
@@ -1145,18 +1149,24 @@
                 });
 
                 const response = await fetch(`${SCRIPT_URL}?${params.toString()}`);
-                const contentType = response.headers.get('Content-Type') || '';
 
-                if (contentType.includes('application/json') || contentType.includes('text/plain')) {
-                    const result = await response.json();
+                // Read body as text ONCE (avoids "body already read" error)
+                const text = await response.text();
+
+                // Try to parse as JSON — if it's an error response from the backend
+                try {
+                    const result = JSON.parse(text);
                     if (result.success === false) {
-                        showAlert('admin', 'error', result.message || 'Export failed.');
+                        showAlert('admin', 'error', result.message || t('toast_csv_error'));
                         if (result.message && result.message.includes('Unauthorized')) logoutAdmin();
                         return;
                     }
+                } catch (jsonErr) {
+                    // Not JSON — this means it's CSV data, continue below
                 }
 
-                const blob = await response.blob();
+                // Create a blob from the text and trigger download
+                const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
                 const url  = window.URL.createObjectURL(blob);
                 const a    = document.createElement('a');
                 a.href     = url;
@@ -1166,11 +1176,13 @@
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
 
-                showAlert('admin', 'success', 'CSV exported successfully!');
+                showAlert('admin', 'success', t('toast_csv_error') ? 'CSV exported!' : 'CSV exported successfully!');
             } catch (err) {
-                showAlert('admin', 'error', 'Network error during export. Please try again.');
+                showAlert('admin', 'error', t('toast_csv_error') || 'Network error during export. Please try again.');
             } finally {
-                btn.textContent = originalText;
-                btn.disabled = false;
+                if (btn) {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }
             }
         }
