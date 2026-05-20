@@ -1166,7 +1166,7 @@
                 }
 
                 // Create a blob from the text and trigger download
-                const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
+                const blob = new Blob(['\uFEFF' + text], { type: 'text/csv;charset=utf-8;' });
                 const url  = window.URL.createObjectURL(blob);
                 const a    = document.createElement('a');
                 a.href     = url;
