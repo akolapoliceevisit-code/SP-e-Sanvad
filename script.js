@@ -2,7 +2,7 @@
         // ==========================================================
         // SETUP: Apps Script Web App URL
         // ==========================================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwH9OBbq_ADwtrn5cvtWt4ZhRNNralCk5EDYmzkyMt-ICChffW_V0xHLJb19NF3nLaI/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzatJ3VKMWjtL2Jcdz0wPWj05aMNG6LdGp5Gqu713DXcWlZ86mk5QUM0sOdhU4QxS44/exec';
 
         let currentDate = '';
         let allBookingsCache = [];
@@ -90,7 +90,23 @@
                 delete_confirm_msg_suffix: '</strong>?<br>This action cannot be undone.',
                 lang_toggle_label: 'मराठी',
                 weekend_closed_msg: 'Booking is closed on weekends (Saturday & Sunday).',
-                weekend_closed_modal: 'Booking is closed on weekends.'
+                weekend_closed_modal: 'Booking is closed on weekends.',
+                blocked_dates_section: 'Blocked Dates',
+                block_date_label: 'Select Date',
+                block_reason_label: 'Reason (optional)',
+                block_reason_placeholder: 'e.g. Holiday, Maintenance',
+                btn_block_date: 'Block Date',
+                btn_unblock: 'Unblock',
+                toast_date_blocked: 'Date blocked successfully.',
+                toast_date_blocked_with_count: 'Date blocked. %d existing booking(s) deleted.',
+                toast_date_unblocked: 'Date unblocked successfully.',
+                toast_block_failed: 'Failed to block date.',
+                toast_unblock_failed: 'Failed to unblock date.',
+                toast_date_already_blocked: 'This date is already blocked.',
+                toast_date_not_blocked: 'This date was not blocked.',
+                date_blocked_msg: 'Bookings are closed for this date.',
+                date_blocked_reason_msg: 'Bookings are closed for this date (%s).',
+                blocked_dates_empty: 'No dates are currently blocked.'
             },
             mr: {
                 nav_booking: 'स्लॉट बुक करा',
@@ -171,7 +187,23 @@
                 delete_confirm_msg_suffix: '</strong> या वेळेचे बुकिंग हटवायचे आहे?<br>ही क्रिया पूर्ववत करता येणार नाही.',
                 lang_toggle_label: 'English',
                 weekend_closed_msg: 'वीकेंडवर (शनिवार आणि रविवार) बुकिंग बंद आहे.',
-                weekend_closed_modal: 'वीकेंडवर बुकिंग बंद आहे.'
+                weekend_closed_modal: 'वीकेंडवर बुकिंग बंद आहे.',
+                blocked_dates_section: 'अवरोधित तारीखे',
+                block_date_label: 'तारीख निवडा',
+                block_reason_label: 'कारण (पर्यायी)',
+                block_reason_placeholder: 'उदा. सुटी, देखभाल',
+                btn_block_date: 'तारीख अवरोधित करा',
+                btn_unblock: 'अनब्लॉक करा',
+                toast_date_blocked: 'तारीख यशस्वीरित्या अवरोधित झाली.',
+                toast_date_blocked_with_count: 'तारीख अवरोधित झाली. %d विद्यमान बुकिंग(s) हटवले.',
+                toast_date_unblocked: 'तारीख यशस्वीरित्या अनब्लॉक झाली.',
+                toast_block_failed: 'तारीख अवरोधित करण्यात अयशस्वी.',
+                toast_unblock_failed: 'तारीख अनब्लॉक करण्यात अयशस्वी.',
+                toast_date_already_blocked: 'ही तारीख आधीपासून अवरोधित आहे.',
+                toast_date_not_blocked: 'ही तारीख अवरोधित नव्हती.',
+                date_blocked_msg: 'या तारखेसाठी बुकिंग बंद आहे.',
+                date_blocked_reason_msg: 'या तारखेसाठी बुकिंग बंद आहे (%s).',
+                blocked_dates_empty: 'सध्या कोणतीही तारीख अवरोधित नाही.'
             }
         };
 
@@ -321,6 +353,18 @@
 
                 grid.innerHTML = '';
                 modalGrid.innerHTML = '';
+
+                // Check if date is blocked by admin
+                if (data.blocked) {
+                    const reason = data.reason || '';
+                    const msg = reason
+                        ? t('date_blocked_reason_msg').replace('%s', reason)
+                        : t('date_blocked_msg');
+                    grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: var(--error-text); padding: 1.5rem; background: var(--error-bg); border-radius: var(--radius);">' + escapeHTML(msg) + '</div>';
+                    modalGrid.innerHTML = '<div style="text-align: center; color: var(--error-text); padding: 1.5rem;">' + escapeHTML(msg) + '</div>';
+                    showAlert('booking', 'error', msg);
+                    return;
+                }
 
                 data.slots.forEach((slot, index) => {
                     // Create button for desktop inline grid
@@ -698,6 +742,7 @@
                     document.getElementById('admin-login').style.display = 'none';
                     document.getElementById('admin-content').style.display = 'block';
                     loadAdminData();
+                    loadBlockedDates();
                 } else {
                     showAlert('admin', 'error', result.message || t('toast_login_error'));
                 }
@@ -711,6 +756,137 @@
             document.getElementById('admin-login').style.display = 'flex';
             document.getElementById('admin-content').style.display = 'none';
             document.getElementById('admin-pass').value = '';
+        }
+
+        // =====================================================================
+        //  ADMIN — Blocked Dates Management
+        // =====================================================================
+        async function loadBlockedDates() {
+            const listEl = document.getElementById('blocked-dates-list');
+            if (!listEl) return;
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=blockedDates&token=${adminToken}`);
+                const data = await response.json();
+
+                if (data.success === false) {
+                    listEl.innerHTML = '<div style="color:var(--error-text);font-size:0.82rem;padding:0.5rem 0;">' + data.message + '</div>';
+                    if (data.message && data.message.includes('Unauthorized')) logoutAdmin();
+                    return;
+                }
+
+                renderBlockedDatesList(data);
+            } catch (err) {
+                listEl.innerHTML = '<div style="color:var(--error-text);font-size:0.82rem;padding:0.5rem 0;">Failed to load blocked dates.</div>';
+            }
+        }
+
+        function renderBlockedDatesList(dates) {
+            const listEl = document.getElementById('blocked-dates-list');
+            if (!listEl) return;
+
+            if (!dates || !Array.isArray(dates) || dates.length === 0) {
+                listEl.innerHTML = '<div style="color:var(--ink-muted);font-size:0.82rem;padding:0.5rem 0;">' + t('blocked_dates_empty') + '</div>';
+                return;
+            }
+
+            // Filter out entries that don't have a valid Date field (safety check for old backend)
+            dates = dates.filter(function(item) {
+                return item && item.Date && /^\d{4}-\d{2}-\d{2}$/.test(String(item.Date));
+            });
+
+            if (dates.length === 0) {
+                listEl.innerHTML = '<div style="color:var(--ink-muted);font-size:0.82rem;padding:0.5rem 0;">' + t('blocked_dates_empty') + '</div>';
+                return;
+            }
+
+            dates.sort((a, b) => String(a.Date || '').localeCompare(String(b.Date || '')));
+
+            let html = '';
+            dates.forEach(function(item) {
+                const date = escapeHTML(String(item.Date || ''));
+                const reason = escapeHTML(String(item.Reason || ''));
+
+                let displayDate = date;
+                try {
+                    const parts = date.split('-');
+                    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+                    displayDate = d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+                } catch(e) {}
+
+                html += '<div class="blocked-date-item">' +
+                    '<div class="blocked-date-info">' +
+                        '<span class="blocked-date-badge">' + displayDate + '</span>' +
+                        (reason ? '<span class="blocked-date-reason">' + reason + '</span>' : '') +
+                    '</div>' +
+                    '<button type="button" class="btn-unblock" onclick="unblockDate(\'' + date + '\')">' + t('btn_unblock') + '</button>' +
+                '</div>';
+            });
+
+            listEl.innerHTML = html;
+        }
+
+        async function blockDate() {
+            const datePicker = document.getElementById('block-date-picker');
+            const reasonInput = document.getElementById('block-reason');
+            const dateStr = datePicker.value;
+            const reason = reasonInput.value.trim();
+
+            if (!dateStr) {
+                showAlert('admin', 'error', 'Please select a date to block.');
+                return;
+            }
+
+            const btn = document.querySelector('[onclick="blockDate()"]');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<div class="loader" style="border-top-color:#fff;border-color:rgba(255,255,255,0.2); width:14px; height:14px; display:inline-block;"></div>';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'blockDate', date: dateStr, reason: reason, token: adminToken })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    const msg = result.deletedCount > 0
+                        ? t('toast_date_blocked_with_count').replace('%d', result.deletedCount)
+                        : t('toast_date_blocked');
+                    showAlert('admin', 'success', msg);
+                    datePicker.value = '';
+                    reasonInput.value = '';
+                    loadBlockedDates();
+                } else {
+                    showAlert('admin', 'error', result.message || t('toast_block_failed'));
+                    if (result.message && result.message.includes('Unauthorized')) logoutAdmin();
+                }
+            } catch (err) {
+                showAlert('admin', 'error', t('toast_block_failed'));
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function unblockDate(dateStr) {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'unblockDate', date: dateStr, token: adminToken })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('admin', 'success', t('toast_date_unblocked'));
+                    loadBlockedDates();
+                } else {
+                    showAlert('admin', 'error', result.message || t('toast_unblock_failed'));
+                    if (result.message && result.message.includes('Unauthorized')) logoutAdmin();
+                }
+            } catch (err) {
+                showAlert('admin', 'error', t('toast_unblock_failed'));
+            }
         }
 
         // =====================================================================

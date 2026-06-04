@@ -210,6 +210,24 @@
 
                     <div class="divider"></div>
 
+                    <div class="section-label" data-i18n="blocked_dates_section">Blocked Dates</div>
+                    <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                        <div style="flex:1; min-width: 150px;">
+                            <label data-i18n="block_date_label">Select Date</label>
+                            <input type="date" id="block-date-picker">
+                        </div>
+                        <div style="flex:1; min-width: 150px;">
+                            <label data-i18n="block_reason_label">Reason (optional)</label>
+                            <input type="text" id="block-reason" placeholder="e.g. Holiday, Maintenance" data-i18n-placeholder="block_reason_placeholder">
+                        </div>
+                        <button class="btn-submit btn-sm" style="background:var(--error-text);" onclick="blockDate()" data-i18n="btn_block_date">Block Date</button>
+                    </div>
+                    <div id="blocked-dates-list" class="blocked-dates-list">
+                        <!-- Rendered via JS -->
+                    </div>
+
+                    <div class="divider"></div>
+
                     <div class="admin-header">
                         <h3 id="admin-title" data-i18n="admin_bookings_title">Bookings</h3>
                         <button class="btn-submit btn-sm" onclick="loadAdminData()" data-i18n="btn_refresh">↻ Refresh</button>

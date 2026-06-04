@@ -1310,4 +1310,65 @@
             pointer-events: none;
             z-index: 9999;
         }
+
+        /* ─── BLOCKED DATES ─── */
+        .blocked-dates-list {
+            margin-top: 0.75rem;
+        }
+
+        .blocked-date-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 0.65rem 0.85rem;
+            background: var(--error-bg);
+            border: 1px solid #e0c5c5;
+            border-radius: var(--radius);
+            margin-bottom: 6px;
+            animation: fadeUp 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .blocked-date-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            min-width: 0;
+        }
+
+        .blocked-date-badge {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--error-text);
+            white-space: nowrap;
+        }
+
+        .blocked-date-reason {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.72rem;
+            color: var(--ink-secondary);
+            padding-left: 10px;
+            border-left: 1px solid #e0c5c5;
+        }
+
+        .btn-unblock {
+            flex-shrink: 0;
+            background: var(--surface);
+            border: 1px solid var(--error-text);
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--error-text);
+            padding: 4px 12px;
+            transition: all var(--transition);
+        }
+
+        .btn-unblock:hover {
+            background: var(--error-text);
+            color: #fff;
+        }
    
